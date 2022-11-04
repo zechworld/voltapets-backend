@@ -22,8 +22,7 @@ namespace VoltaPetsAPI.Models
         public string Password { get; set; }
 
         [Column("token")]
-        [Required]
-        public string Token { get; set; }
+        public string? Token { get; set; }
 
         //FK Rol
         [Column("codigo_rol")]
