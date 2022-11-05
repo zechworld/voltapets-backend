@@ -21,27 +21,8 @@ namespace VoltaPetsAPI.Controllers
             _context = context;
         }
 
-        [Route("Registar")]
-        [HttpPost]
-        public async Task<IActionResult> RegistrarUsuario([FromBody] Usuario usuario)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if(await _context.Usuarios.Where(u => u.Email == usuario.Email).AnyAsync())
-            {
-                return BadRequest("El Correo ya tiene un usuario asociado");
-            }
-
-            usuario.Password = Encriptacion.GetSHA256(usuario.Password);
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-
-        }
+        
+        
 
 
 
