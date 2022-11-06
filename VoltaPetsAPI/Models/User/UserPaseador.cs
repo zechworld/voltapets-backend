@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaPetsAPI.Models.User
 {
-    public class UserTutor
+    public class UserPaseador
     {
         //Datos Usuario
         [Required(ErrorMessage = "El campo Correo es obligatorio")]
@@ -20,12 +20,6 @@ namespace VoltaPetsAPI.Models.User
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmPassword { get; set; }
 
-        //FK Rol
-        /*
-        [Required(ErrorMessage = "Se requiere codigo rol")]
-        public int CodigoRol { get; set; }
-        */
-
         //Datos Ubicacion
         [Required(ErrorMessage = "El campo Direccion es obligatorio")]
         [MaxLength(200, ErrorMessage = "La Direccion debe tener como maximo 200 caracteres")]
@@ -33,17 +27,17 @@ namespace VoltaPetsAPI.Models.User
 
         public int? Departamento { get; set; }
 
-        /*
-        public double? Latitud { get; set; }
-
-        public double? Longitud { get; set; }
-        */
-
         //FK Comuna
         [Required(ErrorMessage = "Se requiere codigo comuna")]
         public int CodigoComuna { get; set; }
 
-        //Datos Tutor
+        //Datos Paseador
+        [Required(ErrorMessage = "El Campo Rut es obligatorio")]
+        [MinLength(9, ErrorMessage = "El Rut debe tener como minimo 9 caracteres")]
+        [MaxLength(10, ErrorMessage = "El Rut debe tener como maximo 10 caracteres")]
+        [RegularExpression("^[0-9]+-[0-9kK]{1}$", ErrorMessage = "Formato de Rut incorrecto (Ingrese xxxxxxxx-x)")]
+        public string RutDv { get; set; }
+
         [Required(ErrorMessage = "El campo Nombre es obligatorio")]
         [MinLength(2, ErrorMessage = "El Nombre debe tener como minimo 2 caracteres")]
         [MaxLength(40, ErrorMessage = "El Nombre debe tener como maximo 40 caracteres")]
@@ -65,15 +59,21 @@ namespace VoltaPetsAPI.Models.User
         [MaxLength(500, ErrorMessage = "La Descripcion tiene como maximo 500 caracteres")]
         public string? Descripcion { get; set; }
 
-        /*
-        public bool? Activado { get; set; }
-        */
-
         //FK Usuario
         public int CodigoUsuario { get; set; }
 
         //FK Ubicacion
         public int CodigoUbicacion { get; set; }
+
+        //Metodos para separar el Rut y el DV
+        public string ObtenerRut()
+        {
+            return RutDv[..^3]; 
+        }
+         public string ObtenerDv()
+        {
+            return RutDv.Substring(RutDv.Length - 1);
+        }
 
     }
 }
