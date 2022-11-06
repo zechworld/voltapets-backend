@@ -56,9 +56,6 @@ namespace VoltaPetsAPI.Models.User
         [RegularExpression("^(\\+56)(9)[98765432]\\d{7}$", ErrorMessage = "El formato de Telefono es incorrecto (Formato Ejemplo: +56964987115)")]
         public string Telefono { get; set; }
 
-        [MaxLength(500, ErrorMessage = "La Descripcion tiene como maximo 500 caracteres")]
-        public string? Descripcion { get; set; }
-
         //FK Usuario
         public int CodigoUsuario { get; set; }
 

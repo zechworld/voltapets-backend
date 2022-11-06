@@ -51,12 +51,12 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest("Se requiere codigo comuna");
             }
 
-            /*
-            if (string.IsNullOrWhiteSpace(userTutor.Departamento.ToString()))
+            
+            if (userTutor.Departamento == 0)
             {
                 userTutor.Departamento = null;
             }
-            */
+            
             
             // Agregar validacion de latitud y longitud
             var ubicacionBD = await _context.Ubicaciones.FirstOrDefaultAsync(ub => ub.CodigoComuna == userTutor.CodigoComuna && ub.Direccion == userTutor.Direccion && ub.Departamento.Equals(userTutor.Departamento));
@@ -125,17 +125,11 @@ namespace VoltaPetsAPI.Controllers
 
             //Tutor
 
-            if (string.IsNullOrWhiteSpace(userTutor.Descripcion))
-            {
-                userTutor.Descripcion = null;
-            }
-
             var tutor = new Tutor
             {
                 Nombre = userTutor.Nombre,
                 Apellido = userTutor.Apellido,
                 Telefono = userTutor.Telefono,
-                Descripcion = userTutor.Descripcion,
                 Activado = true,
                 CodigoUsuario = userTutor.CodigoUsuario,
                 CodigoUbicacion = userTutor.CodigoUbicacion
