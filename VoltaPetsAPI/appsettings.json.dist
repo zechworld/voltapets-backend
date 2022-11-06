@@ -1,0 +1,19 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "VoltaPetsConnection": "Server=127.0.0.1;Port=5432;Database=voltapets;User Id=postgres;Password=Voltapets123.;"
+  },
+  "Jwt": {
+    "Key": "363c5ef1bb8d7ed53c557dada12d0fcc",
+    "Issuer": "",
+    "Audience": ""
+  },
+  "AppUrl": ""
+}
