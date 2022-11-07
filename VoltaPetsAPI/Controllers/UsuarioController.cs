@@ -43,7 +43,7 @@ namespace VoltaPetsAPI.Controllers
             var usuario = await _context.Usuarios.Where(u => u.Email == userLogin.Email).FirstOrDefaultAsync();
             if (usuario == null)
             {
-                return NotFound("El Usuario no existe");
+                return NotFound(new { mensaje = "El Usuario no existe" });
             }
 
             if(usuario.Password != Encriptacion.GetSHA256(userLogin.Password))
@@ -87,10 +87,5 @@ namespace VoltaPetsAPI.Controllers
             });
 
         }
-
-
-
-
-
     }
 }

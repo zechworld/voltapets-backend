@@ -35,7 +35,7 @@ namespace VoltaPetsAPI.Controllers
 
             if (await _context.Usuarios.Where(u => u.Email == userPaseador.Email).AnyAsync())
             {
-                return BadRequest($"El Correo {userPaseador.Email} ya tiene un usuario asociado");
+                return BadRequest(new { mensaje = $"El Correo {userPaseador.Email} ya tiene un usuario asociado" });
             }
 
             var usuario = new Usuario
@@ -49,13 +49,13 @@ namespace VoltaPetsAPI.Controllers
 
             if (await _context.Paseadores.Where(p => p.Rut == userPaseador.ObtenerRut() && p.Dv == userPaseador.ObtenerDv()).AnyAsync())
             {
-                return BadRequest($"El Rut {userPaseador.ObtenerRut() + "-" + userPaseador.ObtenerDv()} ya tiene un usuario asociado");
+                return BadRequest(new { mensaje = $"El Rut {userPaseador.ObtenerRut() + "-" + userPaseador.ObtenerDv()} ya tiene un usuario asociado" });
             }
 
             //UBICACION
             if (userPaseador.CodigoComuna == 0)
             {
-                return BadRequest("Se requiere codigo comuna");
+                return BadRequest(new { mensaje = "Se requiere codigo comuna" });
             }
 
             if (userPaseador.Departamento == 0)
@@ -97,12 +97,12 @@ namespace VoltaPetsAPI.Controllers
                     }
                     else
                     {
-                        return BadRequest("No se pudo encontrar el codigo de la ubicacion insertada");
+                        return BadRequest(new { mensaje = "No se pudo encontrar el codigo de la ubicacion insertada" });
                     }
                 }
                 else
                 {
-                    return BadRequest("No se pudo insertar la ubicacion");
+                    return BadRequest(new { mensaje = "No se pudo insertar la ubicacion" });
                 }
             }
 
@@ -121,13 +121,13 @@ namespace VoltaPetsAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest("No se pudo encontrar el codigo del usuario insertado");
+                    return BadRequest(new { mensaje = "No se pudo encontrar el codigo del usuario insertado" });
                 }
 
             }
             else
             {
-                return BadRequest("No se pudo insertar el usuario");
+                return BadRequest(new { mensaje = "No se pudo insertar el usuario" });
             }
 
             //Paseador
@@ -160,22 +160,16 @@ namespace VoltaPetsAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    return BadRequest("No se pudo registrar el tutor");
+                    return BadRequest(new { mensaje = "No se pudo registrar el tutor" });
                 }
                 else
                 {
-                    return BadRequest("No se pudo regisrar el tutor pero se registro usuario y ubicacion");
+                    return BadRequest(new { mensaje = "No se pudo regisrar el tutor pero se registro usuario y ubicacion" });
                 }
             }
 
-            return NoContent();
+            return Ok(new { mensaje = "Cuenta creada con éxito" });
 
         }
-
-
-
-
-
-
     }
 }
