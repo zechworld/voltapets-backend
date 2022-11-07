@@ -61,6 +61,7 @@ namespace VoltaPetsAPI.Controllers
                         
         }
 
+        [Route("RegistrarImagen")]
         [HttpPut]
         public async Task<IActionResult> RegistrarImagenPerfil(int codigoUsuario, Imagen imagen)
         {
@@ -82,6 +83,7 @@ namespace VoltaPetsAPI.Controllers
             return NoContent();
         }
 
+        [Route("CambiarImagen")]
         [HttpPut]
         public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
         {
@@ -105,7 +107,7 @@ namespace VoltaPetsAPI.Controllers
 
             if (codigoUsuario == 0)
             {
-                return StatusCode(500, new {mensaje = "Error en obtener el usuario actual"});
+                return BadRequest(new {mensaje = "Error en obtener el usuario actual"});
             }
 
             var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
