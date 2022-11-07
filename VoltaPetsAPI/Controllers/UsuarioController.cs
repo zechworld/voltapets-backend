@@ -43,12 +43,12 @@ namespace VoltaPetsAPI.Controllers
             var usuario = await _context.Usuarios.Where(u => u.Email == userLogin.Email).FirstOrDefaultAsync();
             if (usuario == null)
             {
-                return NotFound("El Usuario no existe");
+                return NotFound(new { mensaje = "El Usuario no existe" });
             }
 
             if(usuario.Password != Encriptacion.GetSHA256(userLogin.Password))
             {
-                return Unauthorized("Contraseña incorrecta");
+                return Unauthorized(new { mensaje = "Contraseña incorrecta" });
             }
 
             var token = BuildToken(usuario);
@@ -62,19 +62,34 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> AsignarImagenPerfil(Imagen imagen)
+        public async Task<IActionResult> RegistrarImagenPerfil(int codigoUsuario, Imagen imagen)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
-            if(await _context.Imagenes.Where(img => img.Url.Equals(imagen.Url) && img.Path.Equals(imagen.Path)).AnyAsync())
+
+            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+
+            if (usuario == null)
             {
-                return BadRequest("La imagen ya existe en la base de datos");
+                return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            
+            usuario.CodigoImagen = imagen.CodigoImagen;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }            
+
             var claims = (ClaimsIdentity)User.Identity;
             var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
             int codigoUsuario;
@@ -88,26 +103,23 @@ namespace VoltaPetsAPI.Controllers
                 codigoUsuario = 0;
             }
 
+            if (codigoUsuario == 0)
+            {
+                return StatusCode(500, new {mensaje = "Error en obtener el usuario actual"});
+            }
+
             var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
             
             if(usuario == null)
             {
-                return NotFound("Usuario no encontrado");
+                return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
             usuario.CodigoImagen = imagen.CodigoImagen;
             await _context.SaveChangesAsync();
 
-
-
-            return Ok();
+            return NoContent();
         }
-
-        [HttpPut]
-
-
-
-
 
         private string BuildToken(Usuario usuario)
         {
