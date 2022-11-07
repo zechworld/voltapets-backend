@@ -87,10 +87,5 @@ namespace VoltaPetsAPI.Controllers
             });
 
         }
-
-
-
-
-
     }
 }
