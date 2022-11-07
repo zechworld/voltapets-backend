@@ -39,8 +39,7 @@ namespace VoltaPetsAPI
                     builder.SetIsOriginAllowedToAllowWildcardSubdomains()
                     .WithOrigins(new[] { Configuration.GetSection("AppUrl").Value })
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
                 });
             });
             services.AddAuthentication(x =>
