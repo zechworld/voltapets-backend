@@ -154,17 +154,11 @@ namespace VoltaPetsAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { mensaje = "No se pudo regisrar el tutor pero se registro usuario y ubicacion" });
+                    return BadRequest(new { mensaje = "No se pudo registrar el tutor pero se registro usuario y ubicacion" });
                 }
             }
 
-            return NoContent();
-
+            return Created();
         }
-
-
-
-
-
     }
 }
