@@ -158,7 +158,7 @@ namespace VoltaPetsAPI.Controllers
                 }
             }
 
-            return Created();
+            return Ok(new { mensaje = "Cuenta creada con éxito" });
         }
     }
 }
