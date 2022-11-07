@@ -102,12 +102,7 @@ namespace VoltaPetsAPI.Controllers
             }
             else
             {
-                codigoUsuario = 0;
-            }
-
-            if (codigoUsuario == 0)
-            {
-                return BadRequest(new {mensaje = "Error en obtener el usuario actual"});
+                return BadRequest(new { mensaje = "Error en obtener el usuario actual" });
             }
 
             var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
