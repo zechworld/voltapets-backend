@@ -33,7 +33,7 @@ namespace VoltaPetsAPI.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> Login(UserLogin userLogin)
+        public async Task<IActionResult> Login([FromBody] UserLogin userLogin)
         {
             if (!ModelState.IsValid)
             {
@@ -48,14 +48,80 @@ namespace VoltaPetsAPI.Controllers
 
             if(usuario.Password != Encriptacion.GetSHA256(userLogin.Password))
             {
-                return Forbid("Contraseña incorrecta");
+                return Unauthorized(new { mensaje = "Contraseña incorrecta" });
             }
 
-            return BuildToken(usuario);
+            var token = BuildToken(usuario);
+
+            usuario.Token = token;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(token);
                         
         }
 
-        private IActionResult BuildToken(Usuario usuario)
+        [HttpPut]
+        public async Task<IActionResult> RegistrarImagenPerfil(int codigoUsuario, Imagen imagen)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "Usuario no encontrado" });
+            }
+
+            usuario.CodigoImagen = imagen.CodigoImagen;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }            
+
+            var claims = (ClaimsIdentity)User.Identity;
+            var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
+            int codigoUsuario;
+
+            if(int.TryParse(codUser, out int id))
+            {
+                codigoUsuario = id;
+            }
+            else
+            {
+                codigoUsuario = 0;
+            }
+
+            if (codigoUsuario == 0)
+            {
+                return StatusCode(500, new {mensaje = "Error en obtener el usuario actual"});
+            }
+
+            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+            
+            if(usuario == null)
+            {
+                return NotFound(new { mensaje = "Usuario no encontrado" });
+            }
+
+            usuario.CodigoImagen = imagen.CodigoImagen;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private string BuildToken(Usuario usuario)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -78,13 +144,7 @@ namespace VoltaPetsAPI.Controllers
                 signingCredentials: credentials
             );
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                rol = usuario.CodigoRol,
-                expiration = expiration
-
-            });
+            return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
     }
