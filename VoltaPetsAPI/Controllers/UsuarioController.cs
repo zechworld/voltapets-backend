@@ -15,6 +15,7 @@ using VoltaPetsAPI.Data;
 using VoltaPetsAPI.Helpers;
 using VoltaPetsAPI.Models;
 using VoltaPetsAPI.Models.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -63,14 +64,20 @@ namespace VoltaPetsAPI.Controllers
 
         [Route("RegistrarImagen")]
         [HttpPut]
-        public async Task<IActionResult> RegistrarImagenPerfil(int codigoUsuario, Imagen imagen)
+        [AllowAnonymous]
+        public async Task<IActionResult> RegistrarImagenPerfil(UserImagen img)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+            var usuario = await _context.Usuarios.FindAsync(img.CodigoUsuario);
+            var imagen = new Imagen();
+            imagen.Url = img.Url;
+            imagen.Path = img.Path;
+
+            _context.Imagenes.Add(imagen);
 
             if (usuario == null)
             {
@@ -78,6 +85,7 @@ namespace VoltaPetsAPI.Controllers
             }
 
             usuario.CodigoImagen = imagen.CodigoImagen;
+            usuario.Imagen = imagen;
             await _context.SaveChangesAsync();
 
             return NoContent();
