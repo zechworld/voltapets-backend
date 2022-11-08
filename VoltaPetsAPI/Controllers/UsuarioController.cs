@@ -48,7 +48,7 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "El Usuario no existe" });
             }
 
-            if(usuario.Password.Equals(Encriptacion.GetSHA256(userLogin.Password)))
+            if(!usuario.Password.Equals(Encriptacion.GetSHA256(userLogin.Password)))
             {
                 return Unauthorized(new { mensaje = "Contraseña incorrecta" });
             }
@@ -59,7 +59,7 @@ namespace VoltaPetsAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(token);
+            return Ok(new { token = token });
                         
         }
 
