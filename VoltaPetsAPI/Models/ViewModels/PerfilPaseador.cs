@@ -5,6 +5,9 @@ namespace VoltaPetsAPI.Models.ViewModels
     public class PerfilPaseador
     {
         //Datos Usuario
+        [Required]
+        public bool IsChangePassword { get; set; }
+
         public string Password { get; set; }
 
         [MinLength(6, ErrorMessage = "La contraseña debe tener como minimo 6 caracteres")]
@@ -35,12 +38,6 @@ namespace VoltaPetsAPI.Models.ViewModels
 
         [MaxLength(500, ErrorMessage = "La Descripcion debe tener como maximo 500 caracteres")]
         public string Descripcion { get; set; }
-
-        //FK Usuario
-        public int CodigoUsuario { get; set; }
-
-        //FK Ubicacion
-        public int CodigoUbicacion { get; set; }
 
     }
 }

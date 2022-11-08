@@ -8,7 +8,7 @@ using VoltaPetsAPI.Models;
 
 namespace VoltaPetsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ComunaController : ControllerBase
     {

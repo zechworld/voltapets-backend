@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +27,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [Route("Registrar")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RegistrarPaseador([FromBody] UserPaseador userPaseador)
         {
@@ -243,8 +245,6 @@ namespace VoltaPetsAPI.Controllers
             });
 
         }
-
-
         
         [Route("EditarPerfil")]
         [HttpPut]
@@ -283,6 +283,8 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar el Paseador" });
             }
 
+            /*
+
             //obtener ubicacion actual del paseador
             var ubicacionActual = await _context.Ubicaciones.FindAsync(paseador.CodigoUbicacion);
 
@@ -291,8 +293,12 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar la ubicacion actual del paseador" });
             }
 
+            */
+
+            //  Ubicacion
+
             //Verificar si Cambio de ubicacion
-            if(!(ubicacionActual.Direccion.Equals(perfil.Direccion) && ubicacionActual.Departamento.Equals(perfil.Departamento) && ubicacionActual.CodigoComuna == perfil.CodigoComuna))
+            if(!(paseador.Ubicacion.Direccion.Equals(perfil.Direccion) && paseador.Ubicacion.Departamento.Equals(perfil.Departamento) && paseador.Ubicacion.CodigoComuna == perfil.CodigoComuna))
             {
                 /* 
                 verificar ubicacion nueva existe
@@ -304,16 +310,27 @@ namespace VoltaPetsAPI.Controllers
                 */
 
                 //Buscar ubicacion nueva en base de datos
-                var ubicacionExistente = await _context.Ubicaciones
+                var ubicacionNueva = await _context.Ubicaciones
                     .FirstOrDefaultAsync(ub => ub.Direccion.Equals(perfil.Direccion) && ub.Departamento.Equals(perfil.Departamento) && ub.CodigoComuna == perfil.CodigoComuna);
 
                 //Verificar si no existe la ubicacion nueva en la base de datos
-                if(ubicacionExistente == null)
+                if(ubicacionNueva == null)
                 {
                     //API de GeoCordenadas -------------------------------------------
                     Random random = new Random();
                     double latitud = random.NextDouble();
                     double longitud = random.NextDouble();
+
+                    ubicacionNueva = new Ubicacion
+                    {
+                        Direccion = perfil.Direccion,
+                        Departamento = perfil.Departamento,
+                        Latitud = latitud,
+                        Longitud = longitud,
+                        CodigoComuna = perfil.CodigoComuna
+                    };
+
+                    /*
 
                     //insertar ubicacion nueva
                     var ubicacionNueva = new Ubicacion()
@@ -328,16 +345,36 @@ namespace VoltaPetsAPI.Controllers
                     _context.Ubicaciones.Add(ubicacionNueva);
                     await _context.SaveChangesAsync();
 
-                    
+                    */
 
                 }
 
-
-                
-
+                paseador.Ubicacion = ubicacionNueva;
 
             }
 
+            // Contraseña
+
+            if (perfil.IsChangePassword)
+            {
+                if (!usuario.Password.Equals(Encriptacion.GetSHA256(perfil.Password)))
+                {
+                    return BadRequest(new { mensaje = "La Contraseña actual es incorrecta" });
+                }
+
+                if (!perfil.NewPassword.Equals(perfil.ConfirmNewPassword))
+                {
+                    return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
+                }
+
+                usuario.Password = perfil.NewPassword;
+
+            }
+
+            paseador.Telefono = perfil.Telefono;
+            paseador.Descripcion = perfil.Descripcion;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -376,53 +413,70 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar el Paseador" });
             }
 
+            /*
             //obtener tarifa
-            Tarifa tarifa = new Tarifa()
-            {
-                Basico = 0,
-                Juego = 0,
-                Social = 0
-                
-            };
+            var tarifa = await _context.Tarifas
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino.Equals(null));
 
-            if(await _context.Tarifas.Where(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino.Equals(null)).AnyAsync())
+            if(tarifa == null)
             {
-                tarifa = await _context.Tarifas
-               .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino.Equals(null));
+                tarifa = new Tarifa()
+                {
+                    Basico = 0,
+                    Juego = 0,
+                    Social = 0
+
+                };
             }
 
             //obtener perro aceptado
-            PerroAceptado aceptado = new PerroAceptado()
-            {
-                TamanioToy = false,
-                TamanioPequenio = false,
-                TamanioMediano = false,
-                TamanioGrande = false,
-                TamanioGigante = false,
-                CantidadPerro = 0
-            };
+            var aceptado = await _context.PerroAceptados
+                .AsNoTracking()
+                .FirstOrDefaultAsync(pa => pa.CodigoPaseador == paseador.CodigoPaseador);
 
-            if(await _context.PerroAceptados.Where(pa => pa.CodigoPaseador == paseador.CodigoPaseador).AnyAsync())
+            if(aceptado == null)
             {
-                aceptado = await _context.PerroAceptados
-                    .FirstOrDefaultAsync(pa => pa.CodigoPaseador == paseador.CodigoPaseador);
+                aceptado = new PerroAceptado()
+                {
+                    TamanioToy = false,
+                    TamanioPequenio = false,
+                    TamanioMediano = false,
+                    TamanioGrande = false,
+                    TamanioGigante = false,
+                    CantidadPerro = 0
+                };
             }
+            */
 
             return Ok(new
             {
-                Basico = tarifa.Basico,
-                Juego = tarifa.Juego,
-                Social = tarifa.Social,
-                Toy = aceptado.TamanioToy,
-                Pequenio = aceptado.TamanioPequenio,
-                Mediano = aceptado.TamanioMediano,
-                Grande = aceptado.TamanioGrande,
-                Gigante = aceptado.TamanioGigante,
-                cantidad = aceptado.CantidadPerro
+                Basico = paseador.Tarifas
+                .FirstOrDefault(t => t.FechaTermino.Equals(null)).Basico,
+                Juego = paseador.Tarifas
+                .FirstOrDefault(t => t.FechaTermino.Equals(null)).Juego,
+                Social = paseador.Tarifas
+                .FirstOrDefault(t => t.FechaTermino.Equals(null)).Social,
+                Toy = paseador.PerroAceptado.TamanioToy,
+                Pequenio = paseador.PerroAceptado.TamanioPequenio,
+                Mediano = paseador.PerroAceptado.TamanioMediano,
+                Grande = paseador.PerroAceptado.TamanioGrande,
+                Gigante = paseador.PerroAceptado.TamanioGigante,
+                cantidad = paseador.PerroAceptado.CantidadPerro
 
             });
             
         }
+
+        /*
+        [Route("EditarLaboral")]
+        [HttpPut]
+        public async Task<IActionResult> EditarParametrosLaborales()
+        {
+
+        }
+        */
+        
 
         /*
         

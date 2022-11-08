@@ -33,6 +33,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [Route("Login")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserLogin userLogin)
         {
@@ -47,7 +48,7 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "El Usuario no existe" });
             }
 
-            if(usuario.Password != Encriptacion.GetSHA256(userLogin.Password))
+            if(usuario.Password.Equals(Encriptacion.GetSHA256(userLogin.Password)))
             {
                 return Unauthorized(new { mensaje = "Contraseña incorrecta" });
             }
@@ -63,8 +64,8 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [Route("RegistrarImagen")]
-        [HttpPut]
         [AllowAnonymous]
+        [HttpPut]        
         public async Task<IActionResult> RegistrarImagenPerfil(UserImagen img)
         {
             if (!ModelState.IsValid)

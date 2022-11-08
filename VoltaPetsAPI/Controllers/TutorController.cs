@@ -8,6 +8,7 @@ using VoltaPetsAPI.Helpers;
 using VoltaPetsAPI.Models.User;
 using VoltaPetsAPI.Models;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -23,6 +24,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [Route("Registrar")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RegistrarTutor([FromBody] UserTutor userTutor)
         {
