@@ -16,7 +16,8 @@ namespace VoltaPetsAPI.Models
         public string Path { get; set; }
 
         [Column("url")]
-        [Required]        
+        [Required]
+        [Url]
         public string Url { get; set; }
 
         //Relacion 1 a 1 con Usuario

@@ -155,6 +155,8 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar el Paseador" });
             }
 
+            /*
+
             //obtener ubicacion del paseador
             var ubicacion = await _context.Ubicaciones.FindAsync(paseador.CodigoUbicacion);
 
@@ -209,6 +211,8 @@ namespace VoltaPetsAPI.Controllers
 
             }
 
+            */
+
             //obtener calificacion paseador
             float? calificacion = await _context.Calificaciones
                 .Include(c => c.Paseos)
@@ -227,13 +231,13 @@ namespace VoltaPetsAPI.Controllers
                 Descripcion = paseador.Descripcion,
                 Telefono = paseador.Telefono,
                 Email = usuario.Email,
-                Direccion = ubicacion.Direccion,
-                Departamento = ubicacion.Departamento,
-                CodigoComuna = comuna.CodigoComuna,
-                Comuna = comuna.Descripcion,
-                CodigoRegion = region.CodigoRegion,
-                Region = region.Descripcion,
-                Experencia = experiencia.Descripcion,
+                Direccion = paseador.Ubicacion.Direccion,
+                Departamento = paseador.Ubicacion.Departamento,
+                CodigoComuna = paseador.Ubicacion.Comuna.CodigoComuna,
+                Comuna = paseador.Ubicacion.Comuna.Descripcion,
+                CodigoRegion = paseador.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                Region = paseador.Ubicacion.Comuna.Provincia.Region.Descripcion,
+                Experencia = paseador.ExperienciaPaseador.Descripcion,
                 Calificacion = calificacion
 
             });

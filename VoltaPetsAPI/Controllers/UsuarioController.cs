@@ -122,7 +122,7 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            usuario.CodigoImagen = imagen.CodigoImagen;
+            usuario.Imagen = imagen;
             await _context.SaveChangesAsync();
 
             return NoContent();
