@@ -568,10 +568,10 @@ namespace VoltaPetsAPI.Controllers
                 }
             }
 
-            return Ok(new 
+            return Ok(new
             {
                 codigoUsuario = paseador.CodigoUsuario,
-                mensaje = "Cuenta creada con éxito" 
+                mensaje = "Cuenta creada con éxito"
             });
 
         }
