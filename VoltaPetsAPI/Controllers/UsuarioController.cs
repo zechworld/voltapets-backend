@@ -73,19 +73,21 @@ namespace VoltaPetsAPI.Controllers
             }
 
             var usuario = await _context.Usuarios.FindAsync(img.CodigoUsuario);
+            
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "Usuario no encontrado" });
+            }
+
             var imagen = new Imagen();
             imagen.Url = img.Url;
             imagen.Path = img.Path;
 
             _context.Imagenes.Add(imagen);
 
-            if (usuario == null)
-            {
-                return NotFound(new { mensaje = "Usuario no encontrado" });
-            }
-
             usuario.CodigoImagen = imagen.CodigoImagen;
             usuario.Imagen = imagen;
+
             await _context.SaveChangesAsync();
 
             return NoContent();
