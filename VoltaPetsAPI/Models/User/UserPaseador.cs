@@ -65,7 +65,7 @@ namespace VoltaPetsAPI.Models.User
         //Metodos para separar el Rut y el DV
         public string ObtenerRut()
         {
-            return RutDv[..^3]; 
+            return RutDv[..^2]; 
         }
          public string ObtenerDv()
         {
