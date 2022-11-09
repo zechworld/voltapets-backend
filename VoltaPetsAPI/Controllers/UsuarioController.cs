@@ -118,6 +118,7 @@ namespace VoltaPetsAPI.Controllers
                         nombre = paseador.Nombre,
                         apellido = paseador.Apellido,
                         email = paseador.Usuario.Email,
+                        imagen = paseador.Usuario.Imagen
                     });
                         
                 }
@@ -137,6 +138,7 @@ namespace VoltaPetsAPI.Controllers
                         nombre = tutor.Nombre,
                         apellido = tutor.Apellido,
                         email = tutor.Usuario.Email,
+                        imagen = tutor.Usuario.Imagen
                     });
                 }
 
@@ -145,7 +147,6 @@ namespace VoltaPetsAPI.Controllers
 
             return BadRequest(new {mensaje = "Ha ocurrido un error"});
         }
-
 
         [Route("RegistrarImagen")]
         [AllowAnonymous]
