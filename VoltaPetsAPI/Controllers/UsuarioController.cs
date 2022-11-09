@@ -48,7 +48,7 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "El Usuario no existe" });
             }
 
-            if(!usuario.Password.Equals(Encriptacion.GetSHA256(userLogin.Password)))
+            if (!usuario.Password.Equals(Encriptacion.GetSHA256(userLogin.Password)))
             {
                 return Unauthorized(new { mensaje = "Contraseña incorrecta" });
             }
@@ -60,12 +60,96 @@ namespace VoltaPetsAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { token = token });
-                        
+
         }
+
+        [Route("getUsuarioToken")]
+        [HttpGet]
+        public async Task<IActionResult> ObtenerUsuarioToken()
+        {
+            var claims = (ClaimsIdentity)User.Identity;
+            var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
+            int codigoUsuario;
+
+            if (int.TryParse(codUser, out int id))
+            {
+                codigoUsuario = id;
+            }
+            else
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(usr => usr.CodigoUsuario == codigoUsuario);
+
+            if (usuario != null)
+            {
+                // Si es Administrador
+                if (usuario.CodigoRol == 1)
+                {
+                    var admin = await _context.Administradores
+                        .Include(admin => admin.Usuario)
+                        .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.CodigoUsuario);
+
+                    return Ok(new
+                    {
+                        id = admin.CodigoUsuario,
+                        rol = admin.Usuario.Rol.Descripcion,
+                        nombre = admin.Nombre,
+                        apellido = admin.Apellido,
+                        email = admin.Usuario.Email
+                    });
+                }
+
+                // Si es Paseador
+                if (usuario.CodigoRol == 2)
+                {
+                    var paseador = await _context.Paseadores
+                        .Include(paseador => paseador.Usuario)
+                        .ThenInclude(usuario => usuario.Imagen)
+                        .Include(paseador => paseador.Usuario.Rol)
+                        .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.CodigoUsuario);
+
+                    return Ok(new
+                    {
+                        id = paseador.CodigoUsuario,
+                        rol = paseador.Usuario.Rol.Descripcion,
+                        nombre = paseador.Nombre,
+                        apellido = paseador.Apellido,
+                        email = paseador.Usuario.Email,
+                    });
+                        
+                }
+
+                // Si es Tutor
+                if (usuario.CodigoRol == 3) {
+                    var tutor = await _context.Tutores
+                        .Include(tutor => tutor.Usuario)
+                        .ThenInclude(usuario => usuario.Imagen)
+                        .Include(tutor => tutor.Usuario.Rol)
+                        .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.CodigoUsuario);
+
+                    return Ok(new
+                    {
+                        id = tutor.CodigoUsuario,
+                        rol = tutor.Usuario.Rol.Descripcion,
+                        nombre = tutor.Nombre,
+                        apellido = tutor.Apellido,
+                        email = tutor.Usuario.Email,
+                    });
+                }
+
+                return NotFound(new { mensaje = "No se ha encontrado al usuario"});
+            }
+
+            return BadRequest(new {mensaje = "Ha ocurrido un error"});
+        }
+
 
         [Route("RegistrarImagen")]
         [AllowAnonymous]
-        [HttpPut]        
+        [HttpPut]
         public async Task<IActionResult> RegistrarImagenPerfil(UserImagen img)
         {
             if (!ModelState.IsValid)
@@ -74,7 +158,7 @@ namespace VoltaPetsAPI.Controllers
             }
 
             var usuario = await _context.Usuarios.FindAsync(img.CodigoUsuario);
-            
+
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
@@ -101,13 +185,13 @@ namespace VoltaPetsAPI.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }            
+            }
 
             var claims = (ClaimsIdentity)User.Identity;
             var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
             int codigoUsuario;
 
-            if(int.TryParse(codUser, out int id))
+            if (int.TryParse(codUser, out int id))
             {
                 codigoUsuario = id;
             }
@@ -117,8 +201,8 @@ namespace VoltaPetsAPI.Controllers
             }
 
             var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
-            
-            if(usuario == null)
+
+            if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
