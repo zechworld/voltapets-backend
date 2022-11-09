@@ -23,9 +23,9 @@ namespace VoltaPetsAPI.Controllers
             _context = context;
         }
 
-        [Route("Registrar")]
-        [AllowAnonymous]
         [HttpPost]
+        [Route("Registrar")]
+        [AllowAnonymous]       
         public async Task<IActionResult> RegistrarTutor([FromBody] UserTutor userTutor)
         {
             if (!ModelState.IsValid)

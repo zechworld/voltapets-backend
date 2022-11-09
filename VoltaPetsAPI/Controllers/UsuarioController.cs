@@ -32,9 +32,9 @@ namespace VoltaPetsAPI.Controllers
             _config = config;
         }
 
+        [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserLogin userLogin)
         {
             if (!ModelState.IsValid)
@@ -63,9 +63,9 @@ namespace VoltaPetsAPI.Controllers
                         
         }
 
+        [HttpPut]
         [Route("RegistrarImagen")]
-        [AllowAnonymous]
-        [HttpPut]        
+        [AllowAnonymous]               
         public async Task<IActionResult> RegistrarImagenPerfil(UserImagen img)
         {
             if (!ModelState.IsValid)
@@ -94,8 +94,9 @@ namespace VoltaPetsAPI.Controllers
             return NoContent();
         }
 
-        [Route("CambiarImagen")]
         [HttpPut]
+        [Route("CambiarImagen")]
+        [Authorize(Policy = "Usuario")]        
         public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
         {
             if (!ModelState.IsValid)

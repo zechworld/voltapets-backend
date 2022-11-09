@@ -67,6 +67,15 @@ namespace VoltaPetsAPI
                 };
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim("Rol", "1"));
+                options.AddPolicy("Paseador", policy => policy.RequireClaim("Rol", "2"));
+                options.AddPolicy("Tutor", policy => policy.RequireClaim("Rol", "3"));
+                options.AddPolicy("Usuario", policy => policy.RequireClaim("Rol", "2", "3"));
+
+            });
+
             services.AddDbContext<VoltaPetsContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("VoltaPetsConnection"));
