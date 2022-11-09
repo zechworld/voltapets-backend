@@ -35,11 +35,13 @@ namespace VoltaPetsAPI.Controllers
 
             //USUARIO
 
+            //validar que no existe el email
             if (await _context.Usuarios.Where(u => u.Email == userTutor.Email).AnyAsync())
             {
                 return BadRequest(new { mensaje = $"El Correo {userTutor.Email} ya tiene un usuario asociado" });
             }
 
+            //crear usuario
             var usuario = new Usuario
             {
                 Email = userTutor.Email,
@@ -48,31 +50,31 @@ namespace VoltaPetsAPI.Controllers
             };
 
             //UBICACION
+
+            //veriicar que se recibio un codigo comuna
             if (userTutor.CodigoComuna == 0)
             {
                 return BadRequest(new { mensaje = "Se requiere codigo comuna" });
             }
 
-
+            //Formatear departamento no recibido
             if (userTutor.Departamento == 0)
             {
                 userTutor.Departamento = null;
             }
 
-
+            //Buscar ubicacion en la base de datos
             // Agregar validacion de latitud y longitud
-            var ubicacionBD = await _context.Ubicaciones.FirstOrDefaultAsync(ub => ub.CodigoComuna == userTutor.CodigoComuna && ub.Direccion == userTutor.Direccion && ub.Departamento.Equals(userTutor.Departamento));
+            var ubicacion = await _context.Ubicaciones
+                .FirstOrDefaultAsync(ub => ub.CodigoComuna == userTutor.CodigoComuna && ub.Direccion.Equals(userTutor.Direccion) && ub.Departamento.Equals(userTutor.Departamento));
 
-            if (ubicacionBD != null)
-            {
-                userTutor.CodigoUbicacion = ubicacionBD.CodigoUbicacion;
-            }
-            else
+            //verificar que no existe la ubicacion
+            if (ubicacion == null)
             {
                 //ELIMINAR DESPUES DE USAR API ---------------------------------------------------------
                 Random rand = new Random();
 
-                var ubicacion = new Ubicacion
+                ubicacion = new Ubicacion
                 {
                     Direccion = userTutor.Direccion,
                     Departamento = userTutor.Departamento,
@@ -80,84 +82,30 @@ namespace VoltaPetsAPI.Controllers
                     Longitud = rand.NextDouble(),                      //ELIMINAR
                     CodigoComuna = userTutor.CodigoComuna
                 };
-
-                _context.Ubicaciones.Add(ubicacion);
-                var registroUbicacion = await _context.SaveChangesAsync();
-
-                if (registroUbicacion > 0)
-                {
-                    var ubicacionDB = await _context.Ubicaciones.FirstOrDefaultAsync(ub => ub.CodigoComuna == ubicacion.CodigoComuna && ub.Direccion == ubicacion.Direccion && ub.Departamento.Equals(ubicacion.Departamento));
-
-                    if (ubicacionDB != null)
-                    {
-                        userTutor.CodigoUbicacion = ubicacionDB.CodigoUbicacion;
-                    }
-                    else
-                    {
-                        return BadRequest(new { mensaje = "No se pudo encontrar el codigo de la ubicacion insertada" });
-                    }
-                }
-                else
-                {
-                    return BadRequest(new { mensaje = "No se pudo insertar la ubicacion" });
-                }
-            }
-
-            _context.Usuarios.Add(usuario);
-            var registroUsuario = await _context.SaveChangesAsync();
-
-            if (registroUsuario > 0)
-            {
-                var usuarioDB = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == usuario.Email);
-
-                if (usuarioDB != null)
-                {
-                    userTutor.CodigoUsuario = usuarioDB.CodigoUsuario;
-                }
-                else
-                {
-                    return BadRequest(new { mensaje = "No se pudo encontrar el codigo del usuario insertado" });
-                }
-
-            }
-            else
-            {
-                return BadRequest(new { mensaje = "No se pudo insertar el usuario" });
-            }
+                
+            }          
 
             //Tutor
 
+            //registrar tutor
             var tutor = new Tutor
             {
                 Nombre = userTutor.Nombre,
                 Apellido = userTutor.Apellido,
                 Telefono = userTutor.Telefono,
                 Activado = true,
-                CodigoUsuario = userTutor.CodigoUsuario,
-                CodigoUbicacion = userTutor.CodigoUbicacion
+                Usuario = usuario,
+                Ubicacion = ubicacion
             };
 
             _context.Tutores.Add(tutor);
             var registroTutor = await _context.SaveChangesAsync();
 
+            //validar si no se pudo registrar el tutor
             if (registroTutor <= 0)
             {
-                var ubicacionDelete = await _context.Ubicaciones.FindAsync(userTutor.CodigoUbicacion);
-                var usuarioDelete = await _context.Usuarios.FindAsync(userTutor.CodigoUsuario);
-
-                if (usuarioDelete != null && ubicacionDelete != null)
-                {
-                    _context.Ubicaciones.Remove(ubicacionDelete);
-                    _context.Usuarios.Remove(usuarioDelete);
-
-                    await _context.SaveChangesAsync();
-
-                    return BadRequest(new { mensaje = "No se pudo registrar el tutor" });
-                }
-                else
-                {
-                    return BadRequest(new { mensaje = "No se pudo registrar el tutor pero se registro usuario y ubicacion" });
-                }
+                return BadRequest(new { mensaje = "No se pudo registrar el tutor" });
+                
             }
 
             return Ok(new
