@@ -81,6 +81,8 @@ namespace VoltaPetsAPI.Controllers
             }
 
             var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
+                .Include(u => u.Imagen)
                 .FirstOrDefaultAsync(usr => usr.CodigoUsuario == codigoUsuario);
 
             if (usuario != null)
@@ -89,16 +91,17 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 1)
                 {
                     var admin = await _context.Administradores
-                        .Include(admin => admin.Usuario)
+                      //.Include(admin => admin.Usuario)
+                      //.ThenInclude(user => user.Rol)
                         .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
                     {
                         id = admin.CodigoUsuario,
-                        rol = admin.Usuario.Rol.Descripcion,
+                        rol = usuario.Rol.Descripcion,
                         nombre = admin.Nombre,
                         apellido = admin.Apellido,
-                        email = admin.Usuario.Email
+                        email = usuario.Email
                     });
                 }
 
@@ -106,19 +109,19 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 2)
                 {
                     var paseador = await _context.Paseadores
-                        .Include(paseador => paseador.Usuario)
-                        .ThenInclude(usuario => usuario.Imagen)
-                        .Include(paseador => paseador.Usuario.Rol)
+                      //.Include(paseador => paseador.Usuario)
+                      //.ThenInclude(usuario => usuario.Imagen)
+                      //.Include(paseador => paseador.Usuario.Rol)
                         .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
                     {
                         id = paseador.CodigoUsuario,
-                        rol = paseador.Usuario.Rol.Descripcion,
+                        rol = usuario.Rol.Descripcion,
                         nombre = paseador.Nombre,
                         apellido = paseador.Apellido,
-                        email = paseador.Usuario.Email,
-                        imagen = paseador.Usuario.Imagen
+                        email = usuario.Email,
+                        imagen = usuario.Imagen
                     });
                         
                 }
@@ -126,19 +129,19 @@ namespace VoltaPetsAPI.Controllers
                 // Si es Tutor
                 if (usuario.CodigoRol == 3) {
                     var tutor = await _context.Tutores
-                        .Include(tutor => tutor.Usuario)
-                        .ThenInclude(usuario => usuario.Imagen)
-                        .Include(tutor => tutor.Usuario.Rol)
+                      //.Include(tutor => tutor.Usuario)
+                      //.ThenInclude(usuario => usuario.Imagen)
+                      //.Include(tutor => tutor.Usuario.Rol)
                         .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
                     {
                         id = tutor.CodigoUsuario,
-                        rol = tutor.Usuario.Rol.Descripcion,
+                        rol = usuario.Rol.Descripcion,
                         nombre = tutor.Nombre,
                         apellido = tutor.Apellido,
-                        email = tutor.Usuario.Email,
-                        imagen = tutor.Usuario.Imagen
+                        email = usuario.Email,
+                        imagen = usuario.Imagen
                     });
                 }
 
