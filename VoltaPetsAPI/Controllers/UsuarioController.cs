@@ -91,14 +91,11 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 1)
                 {
                     var admin = await _context.Administradores
-                      //.Include(admin => admin.Usuario)
-                      //.ThenInclude(user => user.Rol)
                         .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
                     {
                         id = admin.CodigoUsuario,
-                        rolID=usuario.CodigoRol,
                         rol = usuario.Rol.Descripcion,
                         nombre = admin.Nombre,
                         apellido = admin.Apellido,
@@ -110,9 +107,6 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 2)
                 {
                     var paseador = await _context.Paseadores
-                      //.Include(paseador => paseador.Usuario)
-                      //.ThenInclude(usuario => usuario.Imagen)
-                      //.Include(paseador => paseador.Usuario.Rol)
                         .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
@@ -130,9 +124,6 @@ namespace VoltaPetsAPI.Controllers
                 // Si es Tutor
                 if (usuario.CodigoRol == 3) {
                     var tutor = await _context.Tutores
-                      //.Include(tutor => tutor.Usuario)
-                      //.ThenInclude(usuario => usuario.Imagen)
-                      //.Include(tutor => tutor.Usuario.Rol)
                         .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.CodigoUsuario);
 
                     return Ok(new
