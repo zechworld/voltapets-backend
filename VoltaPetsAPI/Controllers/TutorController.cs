@@ -11,6 +11,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using VoltaPetsAPI.Models.ViewModels;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -203,6 +204,99 @@ namespace VoltaPetsAPI.Controllers
             });
 
         }
+
+        [HttpPut]
+        [Route("EditarPerfil")]
+        [Authorize(Policy = "Tutor")]
+        public async Task<IActionResult> EditarPerfilActual(PerfilTutor perfil)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //obtener codigo usuario logeado
+            var claims = (ClaimsIdentity)User.Identity;
+            var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
+            int codigoUsuario;
+
+            if (int.TryParse(codUser, out int id))
+            {
+                codigoUsuario = id;
+            }
+            else
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            //obtener tutor asociado al usuario
+            var tutor = await _context.Tutores
+                .Include(t => t.Usuario)
+                .Include(t => t.Ubicacion)
+                .FirstOrDefaultAsync(t => t.CodigoUsuario == codigoUsuario);
+
+            if(tutor == null)
+            {
+                return NotFound(new { mensaje = "No se pudo encontrar el Tutor" });
+            }
+
+            //verificar si cambio la contraseña
+            if (perfil.IsChangePassword)
+            {
+                if (!tutor.Usuario.Password.Equals(Encriptacion.GetSHA256(perfil.Password)))
+                {
+                    return BadRequest(new { mensaje = "La Contraseña actual es incorrecta" });
+                }
+
+                if (!perfil.NewPassword.Equals(perfil.ConfirmNewPassword))
+                {
+                    return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
+                }
+
+                tutor.Usuario.Password = perfil.NewPassword;
+
+            }
+
+            //verfiicar si cambio la ubicacion
+            if (!(tutor.Ubicacion.Direccion.Equals(perfil.Direccion) && tutor.Ubicacion.Departamento.Equals(perfil.Departamento) && tutor.Ubicacion.CodigoComuna == perfil.CodigoComuna))
+            {
+                //buscar ubicacion nueva en BD
+                var ubicacionNueva = await _context.Ubicaciones.FirstOrDefaultAsync(ub => ub.Direccion.Equals(perfil.Direccion) && ub.Departamento.Equals(perfil.Departamento) && ub.CodigoComuna == perfil.CodigoComuna);
+
+                //verificar si no existe la ubicacion en la BD
+                if (ubicacionNueva == null)
+                {
+                    //API de GeoCordenadas -------------------------------------------
+                    Random random = new Random();
+                    double latitud = random.NextDouble();
+                    double longitud = random.NextDouble();
+
+                    ubicacionNueva = new Ubicacion
+                    {
+                        Direccion = perfil.Direccion,
+                        Departamento = perfil.Departamento,
+                        Latitud = latitud,
+                        Longitud = longitud,
+                        CodigoComuna = perfil.CodigoComuna
+                    };
+                    
+                }
+
+                tutor.Ubicacion = ubicacionNueva;
+
+            }
+
+            tutor.Telefono = perfil.Telefono;
+            tutor.Descripcion= perfil.Descripcion;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
+        }
+
+
+
 
 
 
