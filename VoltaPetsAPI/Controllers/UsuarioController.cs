@@ -59,7 +59,7 @@ namespace VoltaPetsAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { token = token });
+            return Ok(new { token = token, codigoRol = usuario.CodigoRol });
 
         }
 
@@ -98,6 +98,7 @@ namespace VoltaPetsAPI.Controllers
                     return Ok(new
                     {
                         id = admin.CodigoUsuario,
+                        rolID=usuario.CodigoRol,
                         rol = usuario.Rol.Descripcion,
                         nombre = admin.Nombre,
                         apellido = admin.Apellido,
