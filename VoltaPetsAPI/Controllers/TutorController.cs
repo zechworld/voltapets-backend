@@ -180,7 +180,8 @@ namespace VoltaPetsAPI.Controllers
                             }
                         }
                     }
-                }).FirstOrDefaultAsync();
+                }).AsNoTracking()
+                .FirstOrDefaultAsync();
 
             if(tutor == null)
             {

@@ -194,7 +194,7 @@ namespace VoltaPetsAPI.Controllers
                             }
                         }
                     }
-                })
+                }).AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (paseador == null)
@@ -465,6 +465,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener paseador asociado al usuario
             var paseador = await _context.Paseadores
                 .Include(p => p.PerroAceptado)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.CodigoUsuario == codigoUsuario);
 
             if (paseador == null)
