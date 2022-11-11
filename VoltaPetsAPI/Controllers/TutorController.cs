@@ -9,6 +9,8 @@ using VoltaPetsAPI.Models.User;
 using VoltaPetsAPI.Models;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -114,5 +116,29 @@ namespace VoltaPetsAPI.Controllers
                 mensaje = "Cuenta creada con éxito"
             });
         }
+
+        [HttpGet]
+        [Route("Perfil")]
+        [Authorize(Policy = "Tutor")]
+        public async Task<IActionResult> ObtenerPerfilActual()
+        {
+            //Obtener codigo usuario logeado
+            var claims = (ClaimsIdentity)User.Identity;
+            var codUser = claims.FindFirst(JwtRegisteredClaimNames.Sid).Value;
+            int codigoUsuario;
+
+            if (int.TryParse(codUser, out int id))
+            {
+                codigoUsuario = id;
+            }
+            else
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+        }
+
+
+
+
     }
 }
