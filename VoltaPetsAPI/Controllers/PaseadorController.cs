@@ -155,6 +155,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener paseador asociado al usuario
             var paseador = await _context.Paseadores
                 .Include(p => p.Usuario)
+                .ThenInclude(u => u.Imagen)
                 .Include(p => p.ExperienciaPaseador)
                 .Include(p => p.Ubicacion)
                 .ThenInclude(ub => ub.Comuna)
@@ -193,7 +194,7 @@ namespace VoltaPetsAPI.Controllers
                             }
                         }
                     }
-                })
+                }).AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (paseador == null)
@@ -274,10 +275,12 @@ namespace VoltaPetsAPI.Controllers
 
             return Ok(new 
             { 
-                Nombre = paseador.Nombre.Trim() + " " + paseador.Apellido.Trim(),
+                Nombre = paseador.Nombre,
+                Apellido = paseador.Apellido,
                 Descripcion = paseador.Descripcion,
                 Telefono = paseador.Telefono,
                 Email = paseador.Usuario.Email,
+                Imagen = paseador.Usuario.Imagen,
                 Direccion = paseador.Ubicacion.Direccion,
                 Departamento = paseador.Ubicacion.Departamento,
                 CodigoComuna = paseador.Ubicacion.Comuna.CodigoComuna,
@@ -294,7 +297,7 @@ namespace VoltaPetsAPI.Controllers
         [HttpPut]
         [Route("EditarPerfil")]
         [Authorize(Policy = "Paseador")]
-        public async Task<IActionResult> EditarPerfil(PerfilPaseador perfil)
+        public async Task<IActionResult> EditarPerfilActual(PerfilPaseador perfil)
         {
             if (!ModelState.IsValid)
             {
@@ -347,10 +350,28 @@ namespace VoltaPetsAPI.Controllers
 
             */
 
+            // Contraseña
+
+            if (perfil.IsChangePassword)
+            {
+                if (!paseador.Usuario.Password.Equals(Encriptacion.GetSHA256(perfil.Password)))
+                {
+                    return BadRequest(new { mensaje = "La Contraseña actual es incorrecta" });
+                }
+
+                if (!perfil.NewPassword.Equals(perfil.ConfirmNewPassword))
+                {
+                    return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
+                }
+
+                paseador.Usuario.Password = perfil.NewPassword;
+
+            }
+
             //  Ubicacion
 
             //Verificar si Cambio de ubicacion
-            if(!(paseador.Ubicacion.Direccion.Equals(perfil.Direccion) && paseador.Ubicacion.Departamento.Equals(perfil.Departamento) && paseador.Ubicacion.CodigoComuna == perfil.CodigoComuna))
+            if (!(paseador.Ubicacion.Direccion.Equals(perfil.Direccion) && paseador.Ubicacion.Departamento.Equals(perfil.Departamento) && paseador.Ubicacion.CodigoComuna == perfil.CodigoComuna))
             {
                 /* 
                 verificar ubicacion nueva existe
@@ -405,24 +426,6 @@ namespace VoltaPetsAPI.Controllers
 
             }
 
-            // Contraseña
-
-            if (perfil.IsChangePassword)
-            {
-                if (!paseador.Usuario.Password.Equals(Encriptacion.GetSHA256(perfil.Password)))
-                {
-                    return BadRequest(new { mensaje = "La Contraseña actual es incorrecta" });
-                }
-
-                if (!perfil.NewPassword.Equals(perfil.ConfirmNewPassword))
-                {
-                    return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
-                }
-
-                paseador.Usuario.Password = perfil.NewPassword;
-
-            }
-
             paseador.Telefono = perfil.Telefono;
             paseador.Descripcion = perfil.Descripcion;
 
@@ -434,7 +437,7 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         [Route("Laboral")]
         [Authorize(Policy = "Paseador")]
-        public  async Task<IActionResult> ObtenerParametrosLaborales()
+        public  async Task<IActionResult> ObtenerParametrosLaboralesActual()
         {
             //Obtener usuario logeado
             var claims = (ClaimsIdentity)User.Identity;
@@ -462,6 +465,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener paseador asociado al usuario
             var paseador = await _context.Paseadores
                 .Include(p => p.PerroAceptado)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.CodigoUsuario == codigoUsuario);
 
             if (paseador == null)
@@ -526,7 +530,7 @@ namespace VoltaPetsAPI.Controllers
         /*
         [Route("EditarLaboral")]
         [HttpPut]
-        public async Task<IActionResult> EditarParametrosLaborales()
+        public async Task<IActionResult> EditarParametrosLaboralesActual()
         {
 
         }
