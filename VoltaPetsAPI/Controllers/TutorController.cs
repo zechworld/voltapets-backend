@@ -139,6 +139,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener tutor asociado al usuario
             var tutor = await _context.Tutores
                 .Include(t => t.Usuario)
+                .ThenInclude(u => u.Imagen)
                 .Include(t => t.Ubicacion)
                 .ThenInclude(ub => ub.Comuna)
                 .ThenInclude(c => c.Provincia)
@@ -152,7 +153,13 @@ namespace VoltaPetsAPI.Controllers
                     Descripcion = t.Descripcion,
                     Usuario = new Usuario
                     {
-                        Email = t.Usuario.Email
+                        Email = t.Usuario.Email,
+                        Imagen = new Imagen
+                        {
+                            Url = t.Usuario.Imagen.Url,
+                            Path = t.Usuario.Imagen.Path
+                        }
+                        
                     },
                     Ubicacion = new Ubicacion
                     {
@@ -186,6 +193,7 @@ namespace VoltaPetsAPI.Controllers
                 Telefono = tutor.Telefono,
                 Descripcion = tutor.Descripcion,
                 Email = tutor.Usuario.Email,
+                Imagen = tutor.Usuario.Imagen,
                 Direccion = tutor.Ubicacion.Direccion,
                 Departamento = tutor.Ubicacion.Departamento,
                 CodigoComuna = tutor.Ubicacion.Comuna.CodigoComuna,

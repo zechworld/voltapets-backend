@@ -155,6 +155,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener paseador asociado al usuario
             var paseador = await _context.Paseadores
                 .Include(p => p.Usuario)
+                .ThenInclude(u => u.Imagen)
                 .Include(p => p.ExperienciaPaseador)
                 .Include(p => p.Ubicacion)
                 .ThenInclude(ub => ub.Comuna)
@@ -274,10 +275,12 @@ namespace VoltaPetsAPI.Controllers
 
             return Ok(new 
             { 
-                Nombre = paseador.Nombre.Trim() + " " + paseador.Apellido.Trim(),
+                Nombre = paseador.Nombre,
+                Apellido = paseador.Apellido,
                 Descripcion = paseador.Descripcion,
                 Telefono = paseador.Telefono,
                 Email = paseador.Usuario.Email,
+                Imagen = paseador.Usuario.Imagen,
                 Direccion = paseador.Ubicacion.Direccion,
                 Departamento = paseador.Ubicacion.Departamento,
                 CodigoComuna = paseador.Ubicacion.Comuna.CodigoComuna,
