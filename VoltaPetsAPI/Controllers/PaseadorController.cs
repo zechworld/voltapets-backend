@@ -170,7 +170,13 @@ namespace VoltaPetsAPI.Controllers
                     Telefono = p.Telefono,
                     Usuario = new Usuario
                     {
-                        Email = p.Usuario.Email
+                        Email = p.Usuario.Email,
+                        Imagen = new Imagen
+                        {
+                            Url = p.Usuario.Imagen.Url,
+                            Path = p.Usuario.Imagen.Path
+                        }
+                        
                     },
                     ExperienciaPaseador = new ExperienciaPaseador
                     {
