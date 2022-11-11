@@ -14,17 +14,17 @@ namespace VoltaPetsAPI.Models
 
         [Column("nombre")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Nombre { get; set; }
 
         [Column("apellido")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Apellido { get; set; }
 
         [Column("telefono")]
         [Required]
-        [StringLength(11)]
+        [StringLength(12)]
         public string Telefono { get; set; }
 
         [Column("descripcion")]
