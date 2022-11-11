@@ -135,6 +135,65 @@ namespace VoltaPetsAPI.Controllers
             {
                 return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
             }
+
+            //obtener tutor asociado al usuario
+            var tutor = await _context.Tutores
+                .Include(t => t.Usuario)
+                .Include(t => t.Ubicacion)
+                .ThenInclude(ub => ub.Comuna)
+                .ThenInclude(c => c.Provincia)
+                .ThenInclude(pv => pv.Region)
+                .Where(t => t.CodigoUsuario == codigoUsuario)
+                .Select(t => new Tutor
+                {
+                    Nombre = t.Nombre,
+                    Apellido = t.Apellido,
+                    Telefono = t.Telefono,
+                    Descripcion = t.Descripcion,
+                    Usuario = new Usuario
+                    {
+                        Email = t.Usuario.Email
+                    },
+                    Ubicacion = new Ubicacion
+                    {
+                        Direccion = t.Ubicacion.Direccion,
+                        Departamento = t.Ubicacion.Departamento,
+                        Comuna = new Comuna
+                        {
+                            CodigoComuna = t.Ubicacion.Comuna.CodigoComuna,
+                            Descripcion = t.Ubicacion.Comuna.Descripcion,
+                            Provincia = new Provincia
+                            {
+                                Region = new Region
+                                {
+                                    CodigoRegion = t.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                                    Descripcion = t.Ubicacion.Comuna.Provincia.Region.Descripcion
+                                }
+                            }
+                        }
+                    }
+                }).FirstOrDefaultAsync();
+
+            if(tutor == null)
+            {
+                return NotFound(new { mensaje = "No se pudo encontrar el Tutor" });
+            }
+
+            return Ok(new
+            {
+                Nombre = tutor.Nombre,
+                Apellido = tutor.Apellido,
+                Telefono = tutor.Telefono,
+                Descripcion = tutor.Descripcion,
+                Email = tutor.Usuario.Email,
+                Direccion = tutor.Ubicacion.Direccion,
+                Departamento = tutor.Ubicacion.Departamento,
+                CodigoComuna = tutor.Ubicacion.Comuna.CodigoComuna,
+                Comuna = tutor.Ubicacion.Comuna.Descripcion,
+                CodigoRegion = tutor.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                Region = tutor.Ubicacion.Comuna.Provincia.Region.Descripcion
+            });
+
         }
 
 
