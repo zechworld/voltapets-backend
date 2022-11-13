@@ -16,6 +16,7 @@ using VoltaPetsAPI.Helpers;
 using VoltaPetsAPI.Models;
 using VoltaPetsAPI.Models.User;
 using Microsoft.AspNetCore.Authorization;
+using VoltaPetsAPI.Models.ViewModels;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -176,8 +177,8 @@ namespace VoltaPetsAPI.Controllers
 
         [HttpPut]
         [Route("CambiarImagen")]
-        [Authorize(Policy = "Usuario")]        
-        public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
+        [Authorize(Policy = "Usuario")]
+        public async Task<IActionResult> CambiarImagenPerfil(ImagenVM imagen)
         {
             if (!ModelState.IsValid)
             {
@@ -197,14 +198,17 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = "Error en obtener el usuario actual" });
             }
 
-            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+            var usuario = await _context.Usuarios
+                .Include(user => user.Imagen)
+                .FirstOrDefaultAsync(user => user.CodigoUsuario == codigoUsuario);
 
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            usuario.Imagen = imagen;
+            usuario.Imagen.Url = imagen.Url;
+            usuario.Imagen.Path = imagen.Path;
             await _context.SaveChangesAsync();
 
             return NoContent();
