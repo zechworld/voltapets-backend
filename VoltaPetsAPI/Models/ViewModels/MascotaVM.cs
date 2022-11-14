@@ -1,84 +1,43 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using VoltaPetsAPI.Helpers;
 
 namespace VoltaPetsAPI.Models.ViewModels
 {
     public class MascotaVM
-    {
+    {        
         [Required]
-        [MaxLength(20)]
+        [MinLength(2, ErrorMessage = "El Nombre debe tener como mínimo 2 carácteres")]
+        [MaxLength(20, ErrorMessage = "El Nombre debe tener como máximo 20 carácteres")]        
+        [RegularExpression("^([a-zA-ZÀ-ÿ\\u00f1\\u00d1]+)$", ErrorMessage = "Formato de nombre incorrecto (El Nombre no debe contener números o carácteres especiales)")]
         public string Nombre { get; set; }
 
-        [Column("descripcion")]
-        [StringLength(500)]
+        [MaxLength(500, ErrorMessage = "La Descripcion debe tener como máximo 500 carácteres")]
         public string? Descripcion { get; set; }
 
-        [Column("fecha_nacimiento")]
         [Required]
+        [Fecha(ErrorMessage = "Formato incorrecto de Fecha (ISO 8601)")]
         public DateTime FechaNacimiento { get; set; }
 
-        [Column("esterilizado")]
-        [Required]
+        public bool IsFechaNacimiento { get; set; }
+
         public bool Esterilizado { get; set; }
 
-        [Column("edad_registro")]
-        [Required]
-        public int EdadRegistro { get; set; }
-
-        //FK Tutor
-        [Column("codigo_tutor")]
-        [Required]
-        public int CodigoTutor { get; set; }
-
-        [ForeignKey("CodigoTutor")]
-        public virtual Tutor Tutor { get; set; }
+        [Range(0,29, ErrorMessage = "La Edad debe encontrarse en un rango entre {1} y {2} años")]
+        public double? EdadRegistro { get; set; }
 
         //FK Sexo
-        [Column("codigo_sexo")]
         [Required]
-        public int CodigoSexo { get; set; }
-
-        [ForeignKey("CodigoSexo")]
-        public virtual Sexo Sexo { get; set; }
+        public int? CodigoSexo { get; set; }
 
         //FK Tamanio
-        [Column("codigo_tamanio")]
         [Required]
-        public int CodigoTamanio { get; set; }
-
-        [ForeignKey("CodigoTamanio")]
-        public virtual Tamanio Tamanio { get; set; }
+        public int? CodigoTamanio { get; set; }
 
         //FK Raza
-        [Column("codigo_raza")]
         [Required]
-        public int CodigoRaza { get; set; }
+        public int? CodigoRaza { get; set; }     
 
-        [ForeignKey("CodigoRaza")]
-        public virtual Raza Raza { get; set; }
-
-        //FK Grupo Etario
-        [Column("codigo_etario")]
-        [Required]
-        public int CodigoEtario { get; set; }
-
-        [ForeignKey("CodigoEtario")]
-        public virtual GrupoEtario GrupoEtario { get; set; }
-
-        //FK Imagen
-        [Column("codigo_imagen")]
-        public int? CodigoImagen { get; set; }
-
-        [ForeignKey("CodigoImagen")]
-        public virtual Imagen Imagen { get; set; }
-
-        //FK Estado Mascota
-        [Column("codigo_estado_mascota")]
-        [Required]
-        public int CodigoEstadoMascota { get; set; }
-
-        [ForeignKey("CodigoEstadoMascota")]
-        public virtual EstadoMascota EstadoMascota { get; set; }
     }
 }

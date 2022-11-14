@@ -10,8 +10,8 @@ using VoltaPetsAPI.Data;
 namespace VoltaPetsAPI.Migrations
 {
     [DbContext(typeof(VoltaPetsContext))]
-    [Migration("20221104200856_MigracionTokenNull")]
-    partial class MigracionTokenNull
+    [Migration("20221114014817_MigracionInicial")]
+    partial class MigracionInicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -307,17 +307,13 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.Property<string>("EdadInferior")
-                        .IsRequired()
+                    b.Property<double>("EdadInferior")
                         .HasColumnName("edad_inferior")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("double precision");
 
-                    b.Property<string>("EdadSuperior")
-                        .IsRequired()
+                    b.Property<double>("EdadSuperior")
                         .HasColumnName("edad_superior")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("double precision");
 
                     b.HasKey("CodigoEtario");
 
@@ -388,9 +384,9 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(500)")
                         .HasMaxLength(500);
 
-                    b.Property<int>("EdadRegistro")
+                    b.Property<double?>("EdadRegistro")
                         .HasColumnName("edad_registro")
-                        .HasColumnType("integer");
+                        .HasColumnType("double precision");
 
                     b.Property<bool>("Esterilizado")
                         .HasColumnName("esterilizado")
@@ -527,10 +523,10 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnName("apellido")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
-                    b.Property<int>("CodigoExperiencia")
+                    b.Property<int?>("CodigoExperiencia")
                         .HasColumnName("codigo_experiencia")
                         .HasColumnType("integer");
 
@@ -556,8 +552,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnName("nombre")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Rut")
                         .IsRequired()
@@ -568,8 +564,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnName("telefono")
-                        .HasColumnType("character varying(11)")
-                        .HasMaxLength(11);
+                        .HasColumnType("character varying(12)")
+                        .HasMaxLength(12);
 
                     b.HasKey("CodigoPaseador");
 
@@ -1036,15 +1032,27 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<double>("AlturaInferior")
+                        .HasColumnName("altura_inferior")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AlturaSuperior")
+                        .HasColumnName("altura_superior")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnName("descripcion")
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.Property<float>("altura")
-                        .HasColumnName("altura")
-                        .HasColumnType("real");
+                    b.Property<double>("PesoInferior")
+                        .HasColumnName("peso_inferior")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PesoSuperior")
+                        .HasColumnName("peso_superior")
+                        .HasColumnType("double precision");
 
                     b.HasKey("CodigoTamanio");
 
@@ -1143,8 +1151,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnName("apellido")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<int>("CodigoUbicacion")
                         .HasColumnName("codigo_ubicacion")
@@ -1162,14 +1170,14 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnName("nombre")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnName("telefono")
-                        .HasColumnType("character varying(11)")
-                        .HasMaxLength(11);
+                        .HasColumnType("character varying(12)")
+                        .HasMaxLength(12);
 
                     b.HasKey("CodigoTutor");
 
@@ -1493,9 +1501,7 @@ namespace VoltaPetsAPI.Migrations
                 {
                     b.HasOne("VoltaPetsAPI.Models.ExperienciaPaseador", "ExperienciaPaseador")
                         .WithMany("Paseadores")
-                        .HasForeignKey("CodigoExperiencia")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CodigoExperiencia");
 
                     b.HasOne("VoltaPetsAPI.Models.Ubicacion", "Ubicacion")
                         .WithMany("Paseadores")

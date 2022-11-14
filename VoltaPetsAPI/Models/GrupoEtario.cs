@@ -19,13 +19,11 @@ namespace VoltaPetsAPI.Models
 
         [Column("edad_inferior")]
         [Required]
-        [StringLength(20)]
-        public string EdadInferior { get; set; }
+        public double EdadInferior { get; set; } //Cambiar a double
 
         [Column("edad_superior")]
         [Required]
-        [StringLength(20)]
-        public string EdadSuperior { get; set; }
+        public double EdadSuperior { get; set; } //cambiar a double nulleable
 
         //Relacion con Mascota
         public virtual ICollection<Mascota> Mascotas { get; set; }

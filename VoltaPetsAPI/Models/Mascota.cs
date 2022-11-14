@@ -31,8 +31,7 @@ namespace VoltaPetsAPI.Models
         public bool Esterilizado { get; set; }
 
         [Column("edad_registro")]
-        [Required]
-        public int EdadRegistro { get; set; }
+        public double? EdadRegistro { get; set; }
 
         //FK Tutor
         [Column("codigo_tutor")]

@@ -67,8 +67,8 @@ namespace VoltaPetsAPI.Migrations
                     codigo_etario = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     descripcion = table.Column<string>(maxLength: 20, nullable: false),
-                    edad_inferior = table.Column<string>(maxLength: 20, nullable: false),
-                    edad_superior = table.Column<string>(maxLength: 20, nullable: false)
+                    edad_inferior = table.Column<double>(nullable: false),
+                    edad_superior = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,7 +167,10 @@ namespace VoltaPetsAPI.Migrations
                     codigo_tamanio = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     descripcion = table.Column<string>(maxLength: 20, nullable: false),
-                    altura = table.Column<float>(nullable: false)
+                    peso_inferior = table.Column<double>(nullable: false),
+                    peso_superior = table.Column<double>(nullable: false),
+                    altura_inferior = table.Column<double>(nullable: false),
+                    altura_superior = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -291,7 +294,7 @@ namespace VoltaPetsAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     email = table.Column<string>(maxLength: 200, nullable: false),
                     password = table.Column<string>(maxLength: 70, nullable: false),
-                    token = table.Column<string>(nullable: false),
+                    token = table.Column<string>(nullable: true),
                     codigo_rol = table.Column<int>(nullable: false),
                     codigo_imagen = table.Column<int>(nullable: true)
                 },
@@ -455,14 +458,14 @@ namespace VoltaPetsAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     rut = table.Column<string>(maxLength: 11, nullable: false),
                     dv = table.Column<string>(maxLength: 1, nullable: false),
-                    nombre = table.Column<string>(maxLength: 20, nullable: false),
-                    apellido = table.Column<string>(maxLength: 20, nullable: false),
-                    telefono = table.Column<string>(maxLength: 11, nullable: false),
+                    nombre = table.Column<string>(maxLength: 40, nullable: false),
+                    apellido = table.Column<string>(maxLength: 40, nullable: false),
+                    telefono = table.Column<string>(maxLength: 12, nullable: false),
                     descripcion = table.Column<string>(maxLength: 500, nullable: true),
                     activado = table.Column<bool>(nullable: false),
                     codigo_usuario = table.Column<int>(nullable: false),
                     codigo_ubicacion = table.Column<int>(nullable: false),
-                    codigo_experiencia = table.Column<int>(nullable: false)
+                    codigo_experiencia = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -472,7 +475,7 @@ namespace VoltaPetsAPI.Migrations
                         column: x => x.codigo_experiencia,
                         principalTable: "experiencia_paseador",
                         principalColumn: "codigo_experiencia",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_paseador_ubicacion_codigo_ubicacion",
                         column: x => x.codigo_ubicacion,
@@ -493,9 +496,9 @@ namespace VoltaPetsAPI.Migrations
                 {
                     codigo_tutor = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre = table.Column<string>(maxLength: 20, nullable: false),
-                    apellido = table.Column<string>(maxLength: 20, nullable: false),
-                    telefono = table.Column<string>(maxLength: 11, nullable: false),
+                    nombre = table.Column<string>(maxLength: 40, nullable: false),
+                    apellido = table.Column<string>(maxLength: 40, nullable: false),
+                    telefono = table.Column<string>(maxLength: 12, nullable: false),
                     descripcion = table.Column<string>(maxLength: 500, nullable: true),
                     activado = table.Column<bool>(nullable: false),
                     codigo_usuario = table.Column<int>(nullable: false),
@@ -676,7 +679,7 @@ namespace VoltaPetsAPI.Migrations
                     descripcion = table.Column<string>(maxLength: 500, nullable: true),
                     fecha_nacimiento = table.Column<DateTime>(nullable: false),
                     esterilizado = table.Column<bool>(nullable: false),
-                    edad_registro = table.Column<int>(nullable: false),
+                    edad_registro = table.Column<double>(nullable: true),
                     codigo_tutor = table.Column<int>(nullable: false),
                     codigo_sexo = table.Column<int>(nullable: false),
                     codigo_tamanio = table.Column<int>(nullable: false),

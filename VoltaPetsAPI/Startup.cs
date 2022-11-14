@@ -33,7 +33,7 @@ namespace VoltaPetsAPI
         {
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            ); ;
+            ); 
 
             services.AddCors(options =>
             {
