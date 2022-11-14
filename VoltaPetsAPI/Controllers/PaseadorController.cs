@@ -417,7 +417,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener tarifa
             var tarifa = await _context.Tarifas
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino.Equals(null));
+                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino == null);
 
             if(tarifa == null)
             {
