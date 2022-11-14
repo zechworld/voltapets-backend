@@ -154,7 +154,15 @@ namespace VoltaPetsAPI.Controllers
             
 
         }
-        
+
+        [HttpPost]
+        [Route("RegistrarImagen")]
+        [Authorize(Policy = "Tutor")]
+        public async Task<IActionResult> RegistrarImagenMascota()
+        {
+            return Ok();
+        }
+
 
         
         private double CalcularAnios(DateTime fechaNacimiento)
