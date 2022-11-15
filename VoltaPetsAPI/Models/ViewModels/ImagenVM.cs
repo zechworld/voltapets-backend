@@ -11,6 +11,10 @@ namespace VoltaPetsAPI.Models.ViewModels
 
         [Required]
         public string Path { get; set; }
+
+        public string Public_id { get; set; }
+
+        public string Signature { get; set; }
     }
 }
 
