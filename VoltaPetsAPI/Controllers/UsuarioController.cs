@@ -26,13 +26,16 @@ namespace VoltaPetsAPI.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
+        private readonly Cloudinary _cloudinary;
         private readonly VoltaPetsContext _context;
         private readonly IConfiguration _config;
 
-        public UsuarioController(VoltaPetsContext context, IConfiguration config)
+        public UsuarioController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary)
         {
             _context = context;
             _config = config;
+            _cloudinary = cloudinary;
+            
         }
 
         [HttpPost]
@@ -209,10 +212,8 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            var cloudinary = new Cloudinary();
-
             var deletionParams = new DeletionParams(imagen.Public_id);
-            var resultadoEliminacion = cloudinary.Destroy(deletionParams);
+            var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
 
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
