@@ -212,12 +212,13 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            var deletionParams = new DeletionParams(imagen.Public_id);
-            var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
 
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
             await _context.SaveChangesAsync();
+
+            //var deletionParams = new DeletionParams(imagen.Public_id);
+            //var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
 
             return NoContent();
         }
