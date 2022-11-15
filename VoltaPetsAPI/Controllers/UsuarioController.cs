@@ -17,6 +17,8 @@ using VoltaPetsAPI.Models;
 using VoltaPetsAPI.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using VoltaPetsAPI.Models.ViewModels;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -206,6 +208,9 @@ namespace VoltaPetsAPI.Controllers
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
+
+            //var paramsEliminar = new DeletionParams(publicId: imagen.Public_id);
+            //var resultadoEliminacion = Cloudinary.Destroy(paramsEliminar);
 
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
