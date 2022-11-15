@@ -167,9 +167,9 @@ namespace VoltaPetsAPI.Controllers
             imagen.Url = img.Url;
             imagen.Path = img.Path;
 
-            _context.Imagenes.Add(imagen);
+            _context.Imagenes.Add(imagen);   //TODO: Eliminar
 
-            usuario.CodigoImagen = imagen.CodigoImagen;
+            usuario.CodigoImagen = imagen.CodigoImagen; //TODO: Eliminar
             usuario.Imagen = imagen;
 
             await _context.SaveChangesAsync();
