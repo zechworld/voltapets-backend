@@ -165,11 +165,11 @@ namespace VoltaPetsAPI.Controllers
 
             var imagen = new Imagen();
             imagen.Url = img.Url;
-            imagen.Path = img.Path;
+            imagen.Path = img.Path; 
 
             _context.Imagenes.Add(imagen);
 
-            usuario.CodigoImagen = imagen.CodigoImagen;
+            usuario.CodigoImagen = imagen.CodigoImagen; 
             usuario.Imagen = imagen;
 
             await _context.SaveChangesAsync();
@@ -209,8 +209,10 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            //var paramsEliminar = new DeletionParams(publicId: imagen.Public_id);
-            //var resultadoEliminacion = Cloudinary.Destroy(paramsEliminar);
+            var cloudinary = new Cloudinary();
+
+            var deletionParams = new DeletionParams(imagen.Public_id);
+            var resultadoEliminacion = cloudinary.Destroy(deletionParams);
 
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
