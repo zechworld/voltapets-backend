@@ -14,7 +14,6 @@ namespace VoltaPetsAPI.Models.ViewModels
         [RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-\\.,]).{6,}$", ErrorMessage = "Formato de contraseña incorrecto (Incluir Mayuscula, Minuscula, Numero, Caracter especial")]
         public string NewPassword { get; set; }
         
-
         [Compare("NewPassword", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmNewPassword { get; set; }
 
