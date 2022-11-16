@@ -16,6 +16,9 @@ using VoltaPetsAPI.Helpers;
 using VoltaPetsAPI.Models;
 using VoltaPetsAPI.Models.User;
 using Microsoft.AspNetCore.Authorization;
+using VoltaPetsAPI.Models.ViewModels;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -23,13 +26,16 @@ namespace VoltaPetsAPI.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
+        private readonly Cloudinary _cloudinary;
         private readonly VoltaPetsContext _context;
         private readonly IConfiguration _config;
 
-        public UsuarioController(VoltaPetsContext context, IConfiguration config)
+        public UsuarioController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary)
         {
             _context = context;
             _config = config;
+            _cloudinary = cloudinary;
+            
         }
 
         [HttpPost]
@@ -162,11 +168,11 @@ namespace VoltaPetsAPI.Controllers
 
             var imagen = new Imagen();
             imagen.Url = img.Url;
-            imagen.Path = img.Path;
+            imagen.Path = img.Path; 
 
             _context.Imagenes.Add(imagen);
 
-            usuario.CodigoImagen = imagen.CodigoImagen;
+            usuario.CodigoImagen = imagen.CodigoImagen; 
             usuario.Imagen = imagen;
 
             await _context.SaveChangesAsync();
@@ -176,8 +182,8 @@ namespace VoltaPetsAPI.Controllers
 
         [HttpPut]
         [Route("CambiarImagen")]
-        [Authorize(Policy = "Usuario")]        
-        public async Task<IActionResult> CambiarImagenPerfil(Imagen imagen)
+        [Authorize(Policy = "Usuario")]
+        public async Task<IActionResult> CambiarImagenPerfil(ImagenVM imagen)
         {
             if (!ModelState.IsValid)
             {
@@ -197,15 +203,22 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = "Error en obtener el usuario actual" });
             }
 
-            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
+            var usuario = await _context.Usuarios
+                .Include(user => user.Imagen)
+                .FirstOrDefaultAsync(user => user.CodigoUsuario == codigoUsuario);
 
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            usuario.Imagen = imagen;
+
+            usuario.Imagen.Url = imagen.Url;
+            usuario.Imagen.Path = imagen.Path;
             await _context.SaveChangesAsync();
+
+            //var deletionParams = new DeletionParams(imagen.Public_id);
+            //var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
 
             return NoContent();
         }

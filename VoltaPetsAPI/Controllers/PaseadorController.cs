@@ -143,15 +143,6 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
             }
 
-            /*
-            var usuario = await _context.Usuarios.FindAsync(codigoUsuario);
-
-            if(usuario == null)
-            {
-                return NotFound(new {mensaje = "No se pudo encontrar el Usuario" });
-            }
-            */
-
             //obtener paseador asociado al usuario
             var paseador = await _context.Paseadores
                 .Include(p => p.Usuario)
@@ -170,7 +161,13 @@ namespace VoltaPetsAPI.Controllers
                     Telefono = p.Telefono,
                     Usuario = new Usuario
                     {
-                        Email = p.Usuario.Email
+                        Email = p.Usuario.Email,
+                        Imagen = new Imagen
+                        {
+                            Url = p.Usuario.Imagen.Url,
+                            Path = p.Usuario.Imagen.Path
+                        }
+                        
                     },
                     ExperienciaPaseador = new ExperienciaPaseador
                     {
@@ -202,63 +199,6 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar el Paseador" });
             }
 
-            /*
-            //obtener ubicacion del paseador
-            var ubicacion = await _context.Ubicaciones.FindAsync(paseador.CodigoUbicacion);
-
-            if(ubicacion == null)
-            {
-                return NotFound(new { mensaje = "No se pudo encontrar la ubicacion del paseador" });
-            }
-
-            
-            //obtener comuna del paseador
-            var comuna = await _context.Comunas.FindAsync(ubicacion.CodigoComuna);
-
-            if(comuna == null)
-            {
-                return NotFound(new { mensaje = "No se pudo encontrar la comuna del paseador" });
-            }
-
-            //obtener provincia del paseador
-            var provincia = await _context.Provincias.FindAsync(comuna.CodigoProvincia);
-
-            if(provincia == null)
-            {
-                return NotFound(new { mensaje = "no se pudo obtener la provincia del paseador" });
-            }
-
-            //obtener region del paseador
-            var region = await _context.Regiones.FindAsync(provincia.CodigoRegion);
-
-            if(region == null)
-            {
-                return NotFound(new { mensaje = "no se pudo obtener la region del paseador" });
-            }
-
-            //obtener experiencia paseador
-            ExperienciaPaseador experiencia;
-
-            if (paseador.CodigoExperiencia.Equals(null))
-            {
-                experiencia = new ExperienciaPaseador() 
-                { 
-                    CodigoExperiencia = 0,
-                    Descripcion = null
-                };
-            }
-            else
-            {
-                experiencia = await _context.ExperienciaPaseadores.FindAsync(paseador.CodigoExperiencia);
-
-                if(experiencia == null)
-                {
-                    return NotFound(new { mensaje = "no se pudo obtener la experiencia del paseador" });
-                }
-
-            }
-
-            */
             //Calificacion
 
             float calificacion = 0;
@@ -364,7 +304,7 @@ namespace VoltaPetsAPI.Controllers
                     return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
                 }
 
-                paseador.Usuario.Password = perfil.NewPassword;
+                paseador.Usuario.Password = Encriptacion.GetSHA256(perfil.NewPassword);
 
             }
 
@@ -477,7 +417,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener tarifa
             var tarifa = await _context.Tarifas
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino.Equals(null));
+                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino == null);
 
             if(tarifa == null)
             {
