@@ -304,7 +304,7 @@ namespace VoltaPetsAPI.Controllers
                     return BadRequest(new { mensaje = "Error en confirmar nueva contraseña" });
                 }
 
-                paseador.Usuario.Password = perfil.NewPassword;
+                paseador.Usuario.Password = Encriptacion.GetSHA256(perfil.NewPassword);
 
             }
 
