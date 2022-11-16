@@ -17,9 +17,21 @@ namespace VoltaPetsAPI.Models
         [StringLength(20)]
         public string Descripcion { get; set; }
 
-        [Column("altura")]
+        [Column("peso_inferior")]
         [Required]
-        public float altura { get; set; }
+        public double PesoInferior { get; set; }
+
+        [Column("peso_superior")]
+        [Required]
+        public double PesoSuperior { get; set; }
+
+        [Column("altura_inferior")]
+        [Required]
+        public double AlturaInferior { get; set; }
+
+        [Column("altura_superior")]
+        [Required]
+        public double AlturaSuperior { get; set; }
 
         //Relacion con Mascota
         public virtual ICollection<Mascota> Mascotas { get; set; }
