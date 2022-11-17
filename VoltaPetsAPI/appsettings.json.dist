@@ -1,19 +1,25 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+        }
+    },
+    "AllowedHosts": "*",
+    "ConnectionStrings": {
+        "VoltaPetsConnection": "Server=35.193.153.212;Port=5432;Database=voltapets;User Id=voltapets-user;Password=voltapets123"
+    },
+    "Jwt": {
+        "Key": "363c5ef1bb8d7ed53c557dada12d0fcc",
+        "Issuer": "",
+        "Audience": ""
+    },
+    "AppUrl": "http://localhost:3000",
+    "Cloudinary": {
+        "CloudName": "ddwacmj1e",
+        "ApiKey": "557554581149313",
+        "ApiSecret": "Cx97VZGXCVto22kTtVA-2JGYpWU",
+        "ApiBaseAddress": "https://api.cloudinary.com"
     }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "VoltaPetsConnection": "Server=127.0.0.1;Port=5432;Database=voltapets;User Id=postgres;Password=Voltapets123.;"
-  },
-  "Jwt": {
-    "Key": "363c5ef1bb8d7ed53c557dada12d0fcc",
-    "Issuer": "",
-    "Audience": ""
-  },
-  "AppUrl": ""
 }
