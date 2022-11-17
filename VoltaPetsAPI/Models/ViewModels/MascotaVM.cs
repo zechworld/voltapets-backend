@@ -27,6 +27,8 @@ namespace VoltaPetsAPI.Models.ViewModels
         [Range(0,29, ErrorMessage = "La Edad debe encontrarse en un rango entre {1} y {2} años")]
         public double? EdadRegistro { get; set; }
 
+        public bool IsYear { get; set; }
+
         //FK Sexo
         [Required]
         public int? CodigoSexo { get; set; }

@@ -21,7 +21,9 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerRegiones()
         {
-            var regiones = await _context.Regiones.ToListAsync();
+            var regiones = await _context.Regiones
+                .AsNoTracking()
+                .ToListAsync();
 
             if (regiones.Any())
             {

@@ -22,7 +22,9 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerComunas()
         {
-            var comunas = await _context.Comunas.ToListAsync();
+            var comunas = await _context.Comunas
+                .AsNoTracking()
+                .ToListAsync();
 
             if (comunas.Any())
             {

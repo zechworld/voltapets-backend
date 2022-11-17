@@ -41,16 +41,18 @@ namespace VoltaPetsAPI.Controllers
             //validar fecha nacimiento o adopcion mascota
             DateTime fechaMaximaPermitida = DateTime.Now - TimeSpan.FromDays(180);
 
-            if (mascotaVM.FechaNacimiento >= fechaMaximaPermitida)
+            //validar que la fecha de nacimiento cumpla con 6 meses de edad o más
+            if (mascotaVM.IsFechaNacimiento && mascotaVM.FechaNacimiento >= fechaMaximaPermitida)
             {
                 return BadRequest(new { mensaje = "No se permiten mascotas menores a 6 meses de edad" });
             }
 
+            //validar que la fecha de nacimiento o adopción no implique una edad mayor a 30 años
             DateTime fechaMinimaPermitida = DateTime.Now - TimeSpan.FromDays(10950);
 
             if(mascotaVM.FechaNacimiento <= fechaMinimaPermitida)
             {
-                return BadRequest(new { mensaje = "Ingresa una fecha de nacimiento real (No es posible que un perro tenga más de 30 años)" });
+                return BadRequest(new { mensaje = "Ingresa una fecha de nacimiento o adopción real (No es posible que un perro tenga más de 30 años)" });
             }
 
             //validar edad mascota
@@ -320,6 +322,11 @@ namespace VoltaPetsAPI.Controllers
             //validar edad mascota
             var tiempoMascota = CalcularAnios(mascotaVM.FechaNacimiento);
 
+            if(mascotaVM.EdadRegistro > 0 && !mascotaVM.IsYear)
+            {
+                mascotaVM.EdadRegistro = ObtenerEdadAnios((double)mascotaVM.EdadRegistro);
+            }
+
             if (mascotaVM.IsFechaNacimiento && mascotaVM.EdadRegistro > 0 && mascotaVM.EdadRegistro != tiempoMascota)
             {
                 return BadRequest(new { mensaje = "La edad ingresada no coincide con la edad calculada desde la fecha de nacimiento (La edad no es obligatoria si ingresa una fecha de nacimiento) " });
@@ -333,6 +340,11 @@ namespace VoltaPetsAPI.Controllers
             if (!mascotaVM.IsFechaNacimiento && mascotaVM.EdadRegistro < tiempoMascota)
             {
                 return BadRequest(new { mensaje = $"La edad ingresada no puede ser menor a {tiempoMascota} años, correspondiente al tiempo de adopcion" });
+            }
+
+            if(!mascotaVM.IsFechaNacimiento && (tiempoMascota + (double)mascotaVM.EdadRegistro) < 0.5)
+            {
+                return BadRequest(new { mensaje = "No se permiten mascotas menores a 6 meses de edad" });
             }
 
             if (mascotaVM.IsFechaNacimiento)
@@ -415,7 +427,19 @@ namespace VoltaPetsAPI.Controllers
 
 
 
+        private double ObtenerEdadAnios(double edadMes)
+        {
+             var edadAnios = edadMes / 12;
 
+            if (edadAnios < 1)
+            {
+                return Math.Round(edadAnios, 2, MidpointRounding.ToZero);
+            }
+            else
+            {
+                return Math.Truncate(edadAnios);
+            }
+        }
 
         private double CalcularAnios(DateTime fechaNacimiento)
         {
