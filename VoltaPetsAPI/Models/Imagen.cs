@@ -11,6 +11,10 @@ namespace VoltaPetsAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CodigoImagen { get; set; }
 
+        [Column("public_id")]
+        [Required]
+        public string Public_Id { get; set; }
+
         [Column("path")]
         [Required]
         public string Path { get; set; }

@@ -32,6 +32,7 @@ namespace VoltaPetsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*
             var cloudName = Configuration.GetValue<string>("Cloudinary:CloudName");
             var apiKey = Configuration.GetValue<string>("Cloudinary:ApiKey");
             var apiSecret = Configuration.GetValue<string>("Cloudinary:ApiSecret");
@@ -42,7 +43,7 @@ namespace VoltaPetsAPI
             }
 
             services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
-
+            */
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             ); 

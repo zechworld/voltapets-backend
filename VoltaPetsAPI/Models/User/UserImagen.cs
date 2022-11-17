@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaPetsAPI.Models.User
 {
@@ -7,6 +8,9 @@ namespace VoltaPetsAPI.Models.User
     {
         [Required]
         public int CodigoUsuario { get; set; }
+
+        [Required]
+        public string Public_Id { get; set; }
 
         [Required]
         [Url]
