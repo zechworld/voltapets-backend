@@ -20,6 +20,7 @@
         "CloudName": "ddwacmj1e",
         "ApiKey": "557554581149313",
         "ApiSecret": "Cx97VZGXCVto22kTtVA-2JGYpWU",
-        "ApiBaseAddress": "https://api.cloudinary.com"
+        "ApiBaseAddress": "https://api.cloudinary.com",
+        "DefaultPublicID": "Perfil/default/logo-165px_cumpks.jpg"
     }
 }
