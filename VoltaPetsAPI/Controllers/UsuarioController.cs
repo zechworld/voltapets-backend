@@ -26,15 +26,15 @@ namespace VoltaPetsAPI.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        //private readonly Cloudinary _cloudinary;
+        private readonly Cloudinary _cloudinary;
         private readonly VoltaPetsContext _context;
         private readonly IConfiguration _config;
 
-        public UsuarioController(VoltaPetsContext context, IConfiguration config)
+        public UsuarioController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary)
         {
             _context = context;
             _config = config;
-           // _cloudinary = cloudinary;
+            _cloudinary = cloudinary;
             
         }
 
@@ -212,7 +212,7 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
-            usuario.Imagen.Public_Id = imagen.Public_id;
+            usuario.Imagen.Public_Id = imagen.Public_Id;
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
             var modificacionImagen = await _context.SaveChangesAsync();
