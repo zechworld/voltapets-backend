@@ -179,13 +179,13 @@ namespace VoltaPetsAPI.Controllers
                         Departamento = p.Ubicacion.Departamento,
                         Comuna = new Comuna
                         {
-                            CodigoComuna= p.Ubicacion.Comuna.CodigoComuna,
+                            Id = p.Ubicacion.Comuna.Id,
                             Descripcion = p.Ubicacion.Comuna.Descripcion,
                             Provincia = new Provincia
                             {
                                 Region = new Region
                                 {
-                                    CodigoRegion = p.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                                    Id = p.Ubicacion.Comuna.Provincia.Region.Id,
                                     Descripcion = p.Ubicacion.Comuna.Provincia.Region.Descripcion
                                 }
                             }
@@ -204,12 +204,12 @@ namespace VoltaPetsAPI.Controllers
             float calificacion = 0;
 
             //Revisar si existen calificaciones
-            if (await _context.Paseos.Where(ps => ps.CodigoPaseador == paseador.CodigoPaseador && ps.Calificado).AsNoTracking().AnyAsync())
+            if (await _context.Paseos.Where(ps => ps.CodigoPaseador == paseador.Id && ps.Calificado).AsNoTracking().AnyAsync())
             {
                 //obtener calificacion paseador
                 calificacion = await _context.Paseos
                 .Include(ps => ps.Calificacion)
-                .Where(ps => ps.CodigoPaseador == paseador.CodigoPaseador && ps.Calificado)
+                .Where(ps => ps.CodigoPaseador == paseador.Id && ps.Calificado)
                 .AverageAsync(ps => ps.Calificacion.Valor);
             }        
 
@@ -223,9 +223,9 @@ namespace VoltaPetsAPI.Controllers
                 Imagen = paseador.Usuario.Imagen,
                 Direccion = paseador.Ubicacion.Direccion,
                 Departamento = paseador.Ubicacion.Departamento,
-                CodigoComuna = paseador.Ubicacion.Comuna.CodigoComuna,
+                CodigoComuna = paseador.Ubicacion.Comuna.Id,
                 Comuna = paseador.Ubicacion.Comuna.Descripcion,
-                CodigoRegion = paseador.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                CodigoRegion = paseador.Ubicacion.Comuna.Provincia.Region.Id,
                 Region = paseador.Ubicacion.Comuna.Provincia.Region.Descripcion,
                 Experencia = paseador.ExperienciaPaseador.Descripcion,
                 Calificacion = calificacion
@@ -417,7 +417,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener tarifa
             var tarifa = await _context.Tarifas
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino == null);
+                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.Id && t.FechaTermino == null);
 
             if(tarifa == null)
             {

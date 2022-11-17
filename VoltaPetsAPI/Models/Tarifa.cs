@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_tarifa")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoTarifa { get; set; }
+        public int Id { get; set; }
 
         [Column("basico")]
         [Required]

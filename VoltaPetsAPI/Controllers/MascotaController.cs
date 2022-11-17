@@ -133,11 +133,11 @@ namespace VoltaPetsAPI.Controllers
                 Esterilizado = mascotaVM.Esterilizado,
                 FechaNacimiento = mascotaVM.FechaNacimiento,
                 EdadRegistro = mascotaVM.EdadRegistro,
-                CodigoTutor = tutor.CodigoTutor,
+                CodigoTutor = tutor.Id,
                 CodigoRaza = (int)mascotaVM.CodigoRaza,
                 CodigoTamanio = (int)mascotaVM.CodigoTamanio,
                 CodigoSexo = (int)mascotaVM.CodigoSexo,
-                CodigoEtario = grupoEtario.CodigoEtario,
+                CodigoEtario = grupoEtario.Id,
                 CodigoEstadoMascota = 1
             };
             
@@ -159,7 +159,7 @@ namespace VoltaPetsAPI.Controllers
 
             return Ok(new
             {
-                codigoMascota = mascota.CodigoMascota,
+                codigoMascota = mascota.Id,
                 mensaje = "Mascota registrada con éxito"
             });
             
@@ -188,7 +188,7 @@ namespace VoltaPetsAPI.Controllers
                 .Include(m => m.Raza)
                 .Include(m => m.Tamanio)
                 .Include(m => m.GrupoEtario)
-                .Where(m => m.CodigoMascota == codigoMascota)
+                .Where(m => m.Id == codigoMascota)
                 .Select(m => new Mascota
                 {
                     Nombre = m.Nombre,
@@ -270,10 +270,10 @@ namespace VoltaPetsAPI.Controllers
 
             var misMascotas = await _context.Mascotas
                 .Include(m => m.EstadoMascota)
-                .Where(m => m.CodigoTutor == tutor.CodigoTutor)
+                .Where(m => m.CodigoTutor == tutor.Id)
                 .Select(m => new Mascota
                 {
-                    CodigoMascota = m.CodigoMascota,
+                    Id = m.Id,
                     Nombre = m.Nombre,
                     EstadoMascota = new EstadoMascota
                     {
@@ -393,7 +393,7 @@ namespace VoltaPetsAPI.Controllers
             mascota.CodigoRaza = (int)mascotaVM.CodigoRaza;
             mascota.CodigoTamanio = (int)mascotaVM.CodigoTamanio;
             mascota.CodigoSexo = (int)mascotaVM.CodigoSexo;
-            mascota.CodigoEtario = grupoEtario.CodigoEtario;
+            mascota.CodigoEtario = grupoEtario.Id;
 
             //validar que no exista la mascota con los nuevos datos en la BD
             if (await _context.Mascotas.Where(m => m.Nombre == mascota.Nombre && m.Esterilizado == mascota.Esterilizado && m.FechaNacimiento == mascota.FechaNacimiento && m.EdadRegistro == mascota.EdadRegistro && m.CodigoTutor == mascota.CodigoTutor && m.CodigoRaza == mascota.CodigoRaza && m.CodigoTamanio == mascota.CodigoTamanio && m.CodigoSexo == mascota.CodigoSexo && m.CodigoEtario == mascota.CodigoEtario).AnyAsync())

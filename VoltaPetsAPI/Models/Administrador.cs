@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_administrador")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoAdministrador { get; set; }
+        public int Id { get; set; }
 
         [Column("nombre")]
         [Required]

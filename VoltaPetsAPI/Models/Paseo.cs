@@ -11,7 +11,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_paseo")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPaseo { get; set; }
+        public int Id { get; set; }
 
         [Column("fecha")]
         [Required]

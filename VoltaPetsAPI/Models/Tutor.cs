@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_tutor")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoTutor { get; set; }
+        public int Id { get; set; }
 
         [Column("nombre")]
         [Required]

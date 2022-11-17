@@ -42,11 +42,11 @@ namespace VoltaPetsAPI.Controllers
             var comunas = await _context.Comunas
                 .Include(c => c.Provincia)
                 .ThenInclude(p => p.Region)
-                .Where(c => c.Provincia.Region.CodigoRegion == codigoRegion)
+                .Where(c => c.Provincia.Region.Id == codigoRegion)
                 .Select(c => new Comuna()
                 {
-                    CodigoComuna=c.CodigoComuna,
-                    Descripcion=c.Descripcion,
+                    Id = c.Id,
+                    Descripcion = c.Descripcion,
                 }).AsNoTracking()
                 .ToListAsync();
 

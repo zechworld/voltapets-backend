@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_vacuna_mascota")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoVacunaMascota { get; set; }
+        public int Id { get; set; }
 
         [Column("fecha_vacunacion")]
         [Required]

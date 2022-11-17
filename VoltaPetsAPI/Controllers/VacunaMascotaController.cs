@@ -31,7 +31,7 @@ namespace VoltaPetsAPI.Controllers
             var vacunas = await _context.Vacunas
                     .Select(v => new Vacuna
                     {
-                        CodigoVacuna = v.CodigoVacuna,
+                        Id = v.Id,
                         Descripcion = v.Descripcion,
                         Obligatoria = v.Obligatoria
                     }).AsNoTracking()
@@ -52,7 +52,7 @@ namespace VoltaPetsAPI.Controllers
                     CodigoMascota = vm.CodigoMascota,
                     Vacuna = new Vacuna
                     {
-                        CodigoVacuna = vm.Vacuna.CodigoVacuna,
+                        Id = vm.Vacuna.Id,
                         Descripcion = vm.Vacuna.Descripcion,
                         Obligatoria = vm.Vacuna.Obligatoria
                     },
@@ -69,7 +69,7 @@ namespace VoltaPetsAPI.Controllers
                     VacunaMascotaVM vacunaVM = new VacunaMascotaVM
                     {
                         CodigoMascota = codigoMascota,
-                        CodigoVacuna = v.CodigoVacuna,
+                        CodigoVacuna = v.Id,
                         NombreVacuna = v.Descripcion,
                         FechaVacunacion = null,
                         Obligatoria = v.Obligatoria,
@@ -85,7 +85,7 @@ namespace VoltaPetsAPI.Controllers
                 {
                     VacunaMascotaVM vacunaVM;
 
-                    VacunaMascota vacuna = vacunasMascota.FirstOrDefault(vm => vm.CodigoVacuna == v.CodigoVacuna);
+                    VacunaMascota vacuna = vacunasMascota.FirstOrDefault(vm => vm.CodigoVacuna == v.Id);
                     
                     if (vacuna != null)
                     {
@@ -106,7 +106,7 @@ namespace VoltaPetsAPI.Controllers
                         vacunaVM = new VacunaMascotaVM
                         {
                             CodigoMascota = codigoMascota,
-                            CodigoVacuna = v.CodigoVacuna,
+                            CodigoVacuna = v.Id,
                             NombreVacuna = v.Descripcion,
                             FechaVacunacion = null,
                             Obligatoria = v.Obligatoria,
@@ -198,7 +198,7 @@ namespace VoltaPetsAPI.Controllers
             //validar que vacuna obligatoria tiene imagen de verificacion asociada
             foreach (var vacunaVM in vacunasVM)
             {
-                var vacuna = await _context.Vacunas.AsNoTracking().FirstOrDefaultAsync(v => v.CodigoVacuna == vacunaVM.CodigoVacuna);
+                var vacuna = await _context.Vacunas.AsNoTracking().FirstOrDefaultAsync(v => v.Id == vacunaVM.CodigoVacuna);
 
                 if (!(vacuna.Obligatoria && vacunaVM.HasImagen))
                 {

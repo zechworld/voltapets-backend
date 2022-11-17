@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_anuncio")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoAnuncio { get; set; }
+        public int Id { get; set; }
 
         [Column("titulo")]
         [StringLength(100)]

@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_imagen")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoImagen { get; set; }
+        public int Id { get; set; }
 
         [Column("public_id")]
         [Required]

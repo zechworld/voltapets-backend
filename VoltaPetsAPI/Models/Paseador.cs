@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_paseador")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPaseador { get; set; }
+        public int Id { get; set; }
 
         [Column("rut")]
         [Required]

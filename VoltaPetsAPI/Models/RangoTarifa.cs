@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_rango")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoRango { get; set; }
+        public int Id { get; set; }
 
         [Column("basico_inferior")]
         [Required]

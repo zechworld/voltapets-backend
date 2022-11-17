@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_compromiso")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoCompromiso { get; set; }
+        public int Id { get; set; }
 
         [Column("titulo")]
         [Required]

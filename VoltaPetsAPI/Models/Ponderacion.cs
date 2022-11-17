@@ -11,7 +11,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_ponderacion")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPonderacion { get; set; }
+        public int Id { get; set; }
 
         [Column("positivo")]
         [Required]

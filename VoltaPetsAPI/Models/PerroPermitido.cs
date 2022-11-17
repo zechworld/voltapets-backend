@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_permitido")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPermitido { get; set; }
+        public int Id { get; set; }
 
         [Column("tamanio_mediano")]
         [Required]

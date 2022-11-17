@@ -113,7 +113,7 @@ namespace VoltaPetsAPI.Controllers
 
             return Ok(new
             {
-                codigoTutor = tutor.CodigoTutor,
+                codigoTutor = tutor.Id,
                 mensaje = "Cuenta creada con éxito"
             });
         }
@@ -168,13 +168,13 @@ namespace VoltaPetsAPI.Controllers
                         Departamento = t.Ubicacion.Departamento,
                         Comuna = new Comuna
                         {
-                            CodigoComuna = t.Ubicacion.Comuna.CodigoComuna,
+                            Id = t.Ubicacion.Comuna.Id,
                             Descripcion = t.Ubicacion.Comuna.Descripcion,
                             Provincia = new Provincia
                             {
                                 Region = new Region
                                 {
-                                    CodigoRegion = t.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                                    Id = t.Ubicacion.Comuna.Provincia.Region.Id,
                                     Descripcion = t.Ubicacion.Comuna.Provincia.Region.Descripcion
                                 }
                             }
@@ -198,9 +198,9 @@ namespace VoltaPetsAPI.Controllers
                 Imagen = tutor.Usuario.Imagen,
                 Direccion = tutor.Ubicacion.Direccion,
                 Departamento = tutor.Ubicacion.Departamento,
-                CodigoComuna = tutor.Ubicacion.Comuna.CodigoComuna,
+                CodigoComuna = tutor.Ubicacion.Comuna.Id,
                 Comuna = tutor.Ubicacion.Comuna.Descripcion,
-                CodigoRegion = tutor.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                CodigoRegion = tutor.Ubicacion.Comuna.Provincia.Region.Id,
                 Region = tutor.Ubicacion.Comuna.Provincia.Region.Descripcion
             });
 

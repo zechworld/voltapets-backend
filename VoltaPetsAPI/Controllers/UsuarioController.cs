@@ -89,7 +89,7 @@ namespace VoltaPetsAPI.Controllers
             var usuario = await _context.Usuarios
                 .Include(u => u.Rol)
                 .Include(u => u.Imagen)
-                .FirstOrDefaultAsync(usr => usr.CodigoUsuario == codigoUsuario);
+                .FirstOrDefaultAsync(usr => usr.Id == codigoUsuario);
 
             if (usuario != null)
             {
@@ -97,7 +97,7 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 1)
                 {
                     var admin = await _context.Administradores
-                        .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -113,7 +113,7 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 2)
                 {
                     var paseador = await _context.Paseadores
-                        .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -130,7 +130,7 @@ namespace VoltaPetsAPI.Controllers
                 // Si es Tutor
                 if (usuario.CodigoRol == 3) {
                     var tutor = await _context.Tutores
-                        .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -172,7 +172,7 @@ namespace VoltaPetsAPI.Controllers
 
             _context.Imagenes.Add(imagen);   //TODO: Eliminar
 
-            usuario.CodigoImagen = imagen.CodigoImagen; //TODO: Eliminar
+            usuario.CodigoImagen = imagen.Id; //TODO: Eliminar
             usuario.Imagen = imagen;
 
             await _context.SaveChangesAsync();
@@ -205,12 +205,14 @@ namespace VoltaPetsAPI.Controllers
 
             var usuario = await _context.Usuarios
                 .Include(user => user.Imagen)
-                .FirstOrDefaultAsync(user => user.CodigoUsuario == codigoUsuario);
+                .FirstOrDefaultAsync(user => user.Id == codigoUsuario);
 
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
+
+            var imagenAnteriorPublicId = usuario.Imagen.Public_Id;
 
             usuario.Imagen.Public_Id = imagen.Public_Id;
             usuario.Imagen.Url = imagen.Url;
@@ -219,11 +221,19 @@ namespace VoltaPetsAPI.Controllers
 
             if(modificacionImagen <= 0)
             {
-                //var deletionParams = new DeletionParams(imagen.Public_Id);
-                //var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
-            }
+                var deletionParams = new DeletionParams(imagen.Public_Id);
+                var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
 
-            return NoContent();
+                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil", ResultadoImagen = resultadoEliminacion.Result });
+            }
+            else
+            {
+                var deletionParams = new DeletionParams(imagenAnteriorPublicId);
+                var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
+
+                return NoContent();
+            }
+            
         }
 
         private string BuildToken(Usuario usuario)
@@ -234,7 +244,7 @@ namespace VoltaPetsAPI.Controllers
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-                new Claim(JwtRegisteredClaimNames.Sid, usuario.CodigoUsuario.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sid, usuario.Id.ToString()),
                 new Claim("Rol", usuario.CodigoRol.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
