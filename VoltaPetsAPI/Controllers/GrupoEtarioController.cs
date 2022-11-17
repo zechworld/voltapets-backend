@@ -8,7 +8,7 @@ using VoltaPetsAPI.Data;
 
 namespace VoltaPetsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/w[controller]")]
     [ApiController]
     public class GrupoEtarioController : ControllerBase
     {

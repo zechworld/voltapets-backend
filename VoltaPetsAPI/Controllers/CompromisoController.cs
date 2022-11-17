@@ -11,7 +11,7 @@ using VoltaPetsAPI.Models.ViewModels;
 
 namespace VoltaPetsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class CompromisoController : ControllerBase
     {

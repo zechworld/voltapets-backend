@@ -8,7 +8,7 @@ using VoltaPetsAPI.Data;
 
 namespace VoltaPetsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class RazaController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Obtener/Todo")]
+        [Route("Obtener")]
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerRazas()
         {
