@@ -20,7 +20,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Obtener/Todo")]
+        [Route("Razas")]
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerRazas()
         {
