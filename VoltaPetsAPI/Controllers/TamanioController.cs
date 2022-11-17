@@ -20,7 +20,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Obtener/Todo")]
+        [Route("Obtener")]
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerTamanios()
         {
