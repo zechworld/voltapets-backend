@@ -249,7 +249,7 @@ namespace VoltaPetsAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Obtener/MisMascota")]
+        [Route("Obtener/MisMascotas")]
         [Authorize(Policy = "Tutor")]
         public async Task<IActionResult> ObtenerMisMascotas()
         {
@@ -275,6 +275,9 @@ namespace VoltaPetsAPI.Controllers
                 {
                     Id = m.Id,
                     Nombre = m.Nombre,
+                    Raza = m.Raza,
+                    Imagen = m.Imagen,
+                    EdadRegistro = m.EdadRegistro,
                     EstadoMascota = new EstadoMascota
                     {
                         Descripcion = m.EstadoMascota.Descripcion
