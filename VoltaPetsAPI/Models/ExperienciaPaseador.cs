@@ -17,13 +17,13 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Paseador
-        public virtual ICollection<Paseador> Paseadores { get; set; }
+        public ICollection<Paseador> Paseadores { get; set; }
 
         //Relacion 1 a 1 con PerroPermitido
-        public virtual PerroPermitido PerroPermitido { get; set; }
+        public PerroPermitido PerroPermitido { get; set; }
 
         //Relacion 1 a 1 con RangoTarifa
-        public virtual RangoTarifa RangoTarifa { get; set; }
+        public RangoTarifa RangoTarifa { get; set; }
 
     }
 }

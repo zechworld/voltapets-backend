@@ -22,9 +22,9 @@ namespace VoltaPetsAPI.Models
         public int CodigoRegion { get; set; }
 
         [ForeignKey("CodigoRegion")]
-        public virtual Region Region { get; set; }
+        public Region Region { get; set; }
 
         //Relacion con Comuna
-        public virtual ICollection<Comuna> Comunas { get; set; }
+        public ICollection<Comuna> Comunas { get; set; }
     }
 }

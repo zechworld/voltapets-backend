@@ -22,7 +22,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoVacuna { get; set; }
 
         [ForeignKey("CodigoVacuna")]
-        public virtual Vacuna Vacuna { get; set; }
+        public Vacuna Vacuna { get; set; }
 
         //FK Mascota
         [Column("codigo_mascota")]
@@ -30,14 +30,14 @@ namespace VoltaPetsAPI.Models
         public int CodigoMascota { get; set; }
 
         [ForeignKey("CodigoMascota")]
-        public virtual Mascota Mascota { get; set; }
+        public Mascota Mascota { get; set; }
 
         //FK Imagen
         [Column("codigo_imagen")]
         public int? CodigoImagen { get; set; }
 
         [ForeignKey("CodigoImagen")]
-        public virtual Imagen Imagen { get; set; }
+        public Imagen Imagen { get; set; }
 
     }
 }

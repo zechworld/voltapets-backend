@@ -18,7 +18,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Paseo
-        public virtual ICollection<Paseo> Paseos { get; set; }
+        public ICollection<Paseo> Paseos { get; set; }
 
     }
 }

@@ -31,7 +31,7 @@ namespace VoltaPetsAPI.Models
         public bool Obligatoria { get; set; }
 
         //Relacion con Vacuna Mascota
-        public virtual ICollection<VacunaMascota> VacunaMascotas { get; set; }
+        public ICollection<VacunaMascota> VacunaMascotas { get; set; }
 
     }
 }

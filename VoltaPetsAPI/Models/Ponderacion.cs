@@ -37,7 +37,7 @@ namespace VoltaPetsAPI.Models
         public DateTime? FechaTermino { get; set; }
 
         //Relacion con Comportamiento
-        public virtual ICollection<Comportamiento> Comportamientos { get; set; }
+        public ICollection<Comportamiento> Comportamientos { get; set; }
 
     }
 }

@@ -18,7 +18,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Usuario
-        public virtual ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario> Usuarios { get; set; }
 
     }
 }

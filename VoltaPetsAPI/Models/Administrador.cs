@@ -27,7 +27,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoUsuario { get; set; }
 
         [ForeignKey("CodigoUsuario")]
-        public virtual Usuario Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
     }
 }

@@ -18,10 +18,10 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Mascota
-        public virtual ICollection<Mascota> Mascotas { get; set; }
+        public ICollection<Mascota> Mascotas { get; set; }
 
         //Relacion con Mascota Anuncio
-        public virtual ICollection<MascotaAnuncio> MascotaAnuncios { get; set; }
+        public ICollection<MascotaAnuncio> MascotaAnuncios { get; set; }
 
     }
 }

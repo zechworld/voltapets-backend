@@ -21,5 +21,23 @@ namespace VoltaPetsAPI.Helpers
 
             return codigoUsuario;
         }
+
+        public static int ObtenerCodigoRol(ClaimsIdentity claims)
+        {
+            var codRol = claims.FindFirst("Rol").Value;
+            int codigoRol;
+
+            if (int.TryParse(codRol, out int id))
+            {
+                codigoRol = id;
+            }
+            else
+            {
+                codigoRol = 0;
+            }
+
+            return codigoRol;
+        }
+
     }
 }

@@ -22,13 +22,13 @@ namespace VoltaPetsAPI.Models
         public int CodigoProvincia { get; set; }
 
         [ForeignKey("CodigoProvincia")]
-        public virtual Provincia Provincia { get; set; }
+        public Provincia Provincia { get; set; }
 
         //Relacion con Ubicacion
-        public virtual ICollection<Ubicacion> Ubicaciones { get; set; }
+        public ICollection<Ubicacion> Ubicaciones { get; set; }
 
         //Relacion con Anuncio
-        public virtual ICollection<Anuncio> Anuncios { get; set; }
+        public ICollection<Anuncio> Anuncios { get; set; }
 
     }
 }

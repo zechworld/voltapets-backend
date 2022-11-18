@@ -53,7 +53,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoPaseoMascota { get; set; }
 
         [ForeignKey("CodigoPaseoMascota")]
-        public virtual PaseoMascota PaseoMascota { get; set; }
+        public PaseoMascota PaseoMascota { get; set; }
 
     }
 }

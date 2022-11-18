@@ -17,7 +17,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Provincia
-        public virtual ICollection<Provincia> Provincias { get; set; }
+        public ICollection<Provincia> Provincias { get; set; }
 
     }
 }

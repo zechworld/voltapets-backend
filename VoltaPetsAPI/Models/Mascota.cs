@@ -39,7 +39,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoTutor { get; set; }
 
         [ForeignKey("CodigoTutor")]
-        public virtual Tutor Tutor { get; set; }
+        public Tutor Tutor { get; set; }
 
         //FK Sexo
         [Column("codigo_sexo")]
@@ -47,7 +47,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoSexo { get; set; }
 
         [ForeignKey("CodigoSexo")]
-        public virtual Sexo Sexo { get; set; }
+        public Sexo Sexo { get; set; }
 
         //FK Tamanio
         [Column("codigo_tamanio")]
@@ -55,7 +55,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoTamanio { get; set; }
 
         [ForeignKey("CodigoTamanio")]
-        public virtual Tamanio Tamanio { get; set; }
+        public Tamanio Tamanio { get; set; }
 
         //FK Raza
         [Column("codigo_raza")]
@@ -63,7 +63,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoRaza { get; set; }
 
         [ForeignKey("CodigoRaza")]
-        public virtual Raza Raza { get; set; }
+        public Raza Raza { get; set; }
 
         //FK Grupo Etario
         [Column("codigo_etario")]
@@ -71,14 +71,14 @@ namespace VoltaPetsAPI.Models
         public int CodigoEtario { get; set; }
 
         [ForeignKey("CodigoEtario")]
-        public virtual GrupoEtario GrupoEtario { get; set; }
+        public GrupoEtario GrupoEtario { get; set; }
 
         //FK Imagen
         [Column("codigo_imagen")]
         public int? CodigoImagen { get; set; }
 
         [ForeignKey("CodigoImagen")]
-        public virtual Imagen Imagen { get; set; }
+        public Imagen Imagen { get; set; }
 
         //FK Estado Mascota
         [Column("codigo_estado_mascota")]
@@ -86,19 +86,19 @@ namespace VoltaPetsAPI.Models
         public int CodigoEstadoMascota { get; set; }
 
         [ForeignKey("CodigoEstadoMascota")]
-        public virtual EstadoMascota EstadoMascota { get; set; }
+        public EstadoMascota EstadoMascota { get; set; }
 
         //Relacion con Paseo Mascota
-        public virtual ICollection<PaseoMascota> PaseoMascotas { get; set; }
+        public ICollection<PaseoMascota> PaseoMascotas { get; set; }
 
         //Relacion con Vacuna Mascota
-        public virtual ICollection<VacunaMascota> VacunaMascotas { get; set; }
+        public ICollection<VacunaMascota> VacunaMascotas { get; set; }
 
         //Relacion con Compromiso
-        public virtual ICollection<Compromiso> Compromisos { get; set; }
+        public ICollection<Compromiso> Compromisos { get; set; }
 
         //Relacion con Recordatorio
-        public virtual ICollection<Recordatorio> Recordatorios { get; set; }
+        public ICollection<Recordatorio> Recordatorios { get; set; }
 
     }
 }

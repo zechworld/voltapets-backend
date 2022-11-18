@@ -26,10 +26,10 @@ namespace VoltaPetsAPI.Models
         public double EdadSuperior { get; set; } //cambiar a double nulleable
 
         //Relacion con Mascota
-        public virtual ICollection<Mascota> Mascotas { get; set; }
+        public ICollection<Mascota> Mascotas { get; set; }
 
         //Relacion con Mascota Anuncio
-        public virtual ICollection<MascotaAnuncio> MascotaAnuncios { get; set; }
+        public ICollection<MascotaAnuncio> MascotaAnuncios { get; set; }
 
     }
 }

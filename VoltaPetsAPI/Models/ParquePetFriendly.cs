@@ -31,10 +31,10 @@ namespace VoltaPetsAPI.Models
         public int CodigoComuna { get; set; }
 
         [ForeignKey("CodigoComuna")]
-        public virtual Comuna Comuna { get; set; }
+        public Comuna Comuna { get; set; }
 
         //Relacion con Paseo
-        public virtual ICollection<Paseo> Paseos { get; set; }
+        public ICollection<Paseo> Paseos { get; set; }
 
     }
 }

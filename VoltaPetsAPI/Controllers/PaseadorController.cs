@@ -102,7 +102,8 @@ namespace VoltaPetsAPI.Controllers
                 Telefono = userPaseador.Telefono,
                 Activado = false,
                 Usuario = usuario,
-                Ubicacion = ubicacion
+                Ubicacion = ubicacion,
+                CodigoExperiencia = 1
 
             };               
 
@@ -467,14 +468,240 @@ namespace VoltaPetsAPI.Controllers
             
         }
 
-        /*
-        [Route("EditarLaboral")]
-        [HttpPut]
-        public async Task<IActionResult> EditarParametrosLaboralesActual()
+        [HttpGet]
+        [Route("RestriccionLaboral")]
+        [Authorize(Policy = "Paseador")]
+        public async Task<IActionResult> ObtenerRestriccionesLaboralesActual()
         {
+            var claims = (ClaimsIdentity)User.Identity;
+            var codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
+
+            if(codigoUsuario == 0)
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            var paseador = await _context.Paseadores
+                .Include(p => p.ExperienciaPaseador)
+                .ThenInclude(exp => exp.RangoTarifa)
+                .Include(p => p.ExperienciaPaseador.PerroPermitido)
+                .Where(p => p.CodigoUsuario == codigoUsuario)
+                .Select(p => new Paseador
+                {
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        RangoTarifa = new RangoTarifa
+                        {
+                            BasicoInferior = p.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                            BasicoSuperior = p.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                            JuegoInferior = p.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                            JuegoSuperior = p.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                            SocialInferior = p.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                            SocialSuperior = p.ExperienciaPaseador.RangoTarifa.SocialSuperior
+                        },
+                        PerroPermitido = new PerroPermitido
+                        {
+                            TamanioMediano = p.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                            TamanioGrande = p.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                            TamanioGigante = p.ExperienciaPaseador.PerroPermitido.TamanioGigante
+                        }
+                    }
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+                
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }
+
+            return Ok(new
+            {
+                BasicoInferior = paseador.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                BasicoSuperior = paseador.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                JuegoInferior = paseador.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                JuegoSuperior = paseador.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                SocialInferior = paseador.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                SocialSuperior = paseador.ExperienciaPaseador.RangoTarifa.SocialSuperior,
+                TamanioMediano = paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                TamanioGrande = paseador.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                TamanioGigante = paseador.ExperienciaPaseador.PerroPermitido.TamanioGigante
+            });
 
         }
-        */
+
+
+
+        [HttpPut]
+        [Route("EditarLaboral")]
+        [Authorize(Policy = "Paseador")]
+        public async Task<IActionResult> EditarParametrosLaboralesActual(ParametroLaboralVM parametros)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var claims = (ClaimsIdentity)User.Identity;
+            var codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
+
+            if (codigoUsuario == 0)
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            var paseador = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .Include(p => p.ExperienciaPaseador)
+                .ThenInclude(exp => exp.RangoTarifa)
+                .Include(p => p.ExperienciaPaseador.PerroPermitido)
+                .Where(p => p.CodigoUsuario == codigoUsuario)
+                .Select(p => new Paseador
+                {
+                    PerroAceptado = p.PerroAceptado,
+                    Tarifas = p.Tarifas,
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        RangoTarifa = new RangoTarifa
+                        {
+                            BasicoInferior = p.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                            BasicoSuperior = p.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                            JuegoInferior = p.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                            JuegoSuperior = p.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                            SocialInferior = p.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                            SocialSuperior = p.ExperienciaPaseador.RangoTarifa.SocialSuperior
+                        },
+                        PerroPermitido = new PerroPermitido
+                        {
+                            TamanioMediano = p.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                            TamanioGrande = p.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                            TamanioGigante = p.ExperienciaPaseador.PerroPermitido.TamanioGigante
+                        }
+                    }
+                }).FirstOrDefaultAsync();
+
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }
+
+            if (!paseador.Activado)
+            {
+                return BadRequest(new { mensaje = "No se puede editar los parámtros laborales con una cuenta de Paseador no activada" });
+            }
+
+            //validar parametros con restricciones de experiencia paseador
+            if(parametros.TamanioMediano != paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Mediano de mascota" });
+            }
+
+            if (parametros.TamanioGrande != paseador.ExperienciaPaseador.PerroPermitido.TamanioGrande)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Grande de mascota" });
+            }
+
+            if (parametros.TamanioGigante != paseador.ExperienciaPaseador.PerroPermitido.TamanioGigante)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Gigante de mascota" });
+            }
+
+            if (parametros.Basico < paseador.ExperienciaPaseador.RangoTarifa.BasicoInferior || parametros.Basico > paseador.ExperienciaPaseador.RangoTarifa.BasicoSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa de paseo de necesidades básicas se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            if (parametros.Juego < paseador.ExperienciaPaseador.RangoTarifa.JuegoInferior || parametros.Juego > paseador.ExperienciaPaseador.RangoTarifa.JuegoSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa de tiempo de juego se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            if (parametros.Social < paseador.ExperienciaPaseador.RangoTarifa.SocialInferior || parametros.Social > paseador.ExperienciaPaseador.RangoTarifa.SocialSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa socialización con otras mascotas se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            //preparar datos para actualizar
+
+            //PerroAceptado
+            if(paseador.PerroAceptado == null)
+            {
+                PerroAceptado primerPerroAceptado = new PerroAceptado
+                {
+                    TamanioGigante = parametros.TamanioGigante,
+                    TamanioGrande = parametros.TamanioGrande,
+                    TamanioMediano = parametros.TamanioMediano,
+                    TamanioPequenio = parametros.TamanioPequenio,
+                    TamanioToy = parametros.TamanioToy,
+                    CantidadPerro = (int)parametros.CantidadPerro
+                };
+
+                paseador.PerroAceptado = primerPerroAceptado;
+            }
+            else
+            {
+                paseador.PerroAceptado.TamanioGigante = parametros.TamanioGigante;
+                paseador.PerroAceptado.TamanioGrande = parametros.TamanioGrande;
+                paseador.PerroAceptado.TamanioMediano = parametros.TamanioMediano;
+                paseador.PerroAceptado.TamanioPequenio = parametros.TamanioPequenio;
+                paseador.PerroAceptado.TamanioToy = parametros.TamanioToy;
+                paseador.PerroAceptado.CantidadPerro = (int)parametros.CantidadPerro;
+            }
+            
+
+            //Tarifa
+            if(paseador.Tarifas == null)
+            {
+                Tarifa primeraTarifa = new Tarifa
+                {
+                    Basico = (int)parametros.Basico,
+                    Juego = (int)parametros.Juego,
+                    Social = (int)parametros.Social,
+                    FechaRegistro = DateTime.Now,
+                    FechaTermino = null
+                };
+
+                paseador.Tarifas.Add(primeraTarifa);
+            }
+            else
+            {
+                var tarifa = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null);
+                
+                if(tarifa == null)
+                {
+                    return NotFound(new { mensaje = "No se pudo obtener la última tarifa del paseador" });
+                }
+
+                if(!(tarifa.Basico == parametros.Basico && tarifa.Juego == parametros.Juego && tarifa.Social == parametros.Social))
+                {
+                    Tarifa nuevaTarifa = new Tarifa
+                    {
+                        Basico = (int)parametros.Basico,
+                        Juego = (int)parametros.Juego,
+                        Social = (int)parametros.Social,
+                        FechaRegistro = DateTime.Now,
+                        FechaTermino = null
+                    };
+
+                    paseador.Tarifas.Add(nuevaTarifa);
+
+                    tarifa.FechaTermino = DateTime.Now;
+
+                }
+            }
+
+            var modificacionParametrosLaborales = await _context.SaveChangesAsync();
+
+            if(modificacionParametrosLaborales <= 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo editar los parámetros laborales del paseador" });
+            }
+
+            return NoContent();
+
+        }
+        
         
 
         /*
