@@ -166,9 +166,12 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
+
             var imagen = new Imagen();
             imagen.Url = img.Url;
-            imagen.Path = img.Path; 
+            imagen.Path = img.Path;
+            imagen.Public_Id = img.Public_Id;
+            
 
             _context.Imagenes.Add(imagen);   //TODO: Eliminar
 
@@ -228,8 +231,12 @@ namespace VoltaPetsAPI.Controllers
             }
             else
             {
-                var deletionParams = new DeletionParams(imagenAnteriorPublicId);
-                var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
+                if (imagenAnteriorPublicId != _config["Cloudinary:DefaultPublicID"])
+                {
+                    var deletionParams = new DeletionParams(imagenAnteriorPublicId);
+                    var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
+
+                }
 
                 return NoContent();
             }
