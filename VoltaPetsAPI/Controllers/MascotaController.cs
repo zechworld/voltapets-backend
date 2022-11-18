@@ -276,6 +276,7 @@ namespace VoltaPetsAPI.Controllers
                     Id = m.Id,
                     Nombre = m.Nombre,
                     Raza = m.Raza,
+                    Imagen = m.Imagen,
                     EdadRegistro = m.EdadRegistro,
                     EstadoMascota = new EstadoMascota
                     {
