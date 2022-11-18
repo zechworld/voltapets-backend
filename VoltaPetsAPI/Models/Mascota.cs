@@ -75,7 +75,8 @@ namespace VoltaPetsAPI.Models
 
         //FK Imagen
         [Column("codigo_imagen")]
-        public int? CodigoImagen { get; set; }
+        [Required]
+        public int CodigoImagen { get; set; }
 
         [ForeignKey("CodigoImagen")]
         public Imagen Imagen { get; set; }

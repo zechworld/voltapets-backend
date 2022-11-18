@@ -156,6 +156,7 @@ namespace VoltaPetsAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
                 return BadRequest(ModelState);
             }
 
@@ -163,6 +164,7 @@ namespace VoltaPetsAPI.Controllers
 
             if (usuario == null)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
@@ -178,7 +180,13 @@ namespace VoltaPetsAPI.Controllers
             usuario.CodigoImagen = imagen.Id; //TODO: Eliminar
             usuario.Imagen = imagen;
 
-            await _context.SaveChangesAsync();
+            var modificacionImagen = await _context.SaveChangesAsync();
+
+            if(modificacionImagen <= 0)
+            {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
+                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
+            }
 
             return NoContent();
         }
@@ -190,6 +198,7 @@ namespace VoltaPetsAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return BadRequest(ModelState);
             }
 
@@ -203,6 +212,7 @@ namespace VoltaPetsAPI.Controllers
             }
             else
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return BadRequest(new { mensaje = "Error en obtener el usuario actual" });
             }
 
@@ -212,6 +222,7 @@ namespace VoltaPetsAPI.Controllers
 
             if (usuario == null)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
@@ -224,17 +235,15 @@ namespace VoltaPetsAPI.Controllers
 
             if(modificacionImagen <= 0)
             {
-                var deletionParams = new DeletionParams(imagen.Public_Id);
-                var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
-
-                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil", ResultadoImagen = resultadoEliminacion.Result });
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
+                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
             }
             else
             {
                 if (imagenAnteriorPublicId != _config["Cloudinary:DefaultPublicID"])
                 {
-                    var deletionParams = new DeletionParams(imagenAnteriorPublicId);
-                    var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
+                    imagen.Public_Id = imagenAnteriorPublicId;
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
 
                 }
 
