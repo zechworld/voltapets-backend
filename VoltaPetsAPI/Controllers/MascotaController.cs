@@ -277,20 +277,15 @@ namespace VoltaPetsAPI.Controllers
             }
 
             var misMascotas = await _context.Mascotas
+                .Include(m => m.Imagen)
+                .Include(m => m.GrupoEtario)
                 .Include(m => m.EstadoMascota)
+                .Include(m => m.Raza)
+                .Include(m => m.Sexo)
+                .Include(m => m.Tamanio)
+                .Include(m => m.VacunaMascotas)
                 .Where(m => m.CodigoTutor == tutor.Id)
-                .Select(m => new Mascota
-                {
-                    Id = m.Id,
-                    Nombre = m.Nombre,
-                    Raza = m.Raza,
-                    Imagen = m.Imagen,
-                    EdadRegistro = m.EdadRegistro,
-                    EstadoMascota = new EstadoMascota
-                    {
-                        Descripcion = m.EstadoMascota.Descripcion
-                    }
-                }).AsNoTracking()
+                .AsNoTracking()
                 .ToListAsync();
 
             if (!misMascotas.Any())
