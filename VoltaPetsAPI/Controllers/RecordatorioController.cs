@@ -31,7 +31,7 @@ namespace VoltaPetsAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             Recordatorio recordatorio = new Recordatorio
             {
                 CodigoMascota = (int)recordatorioVM.CodigoMascota,
@@ -65,7 +65,8 @@ namespace VoltaPetsAPI.Controllers
 
             return Ok(recordatoriosMascota);
 
-        }
+            }
 
-    }
-}
+            }
+            }
+
