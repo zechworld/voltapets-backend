@@ -23,12 +23,10 @@ namespace VoltaPetsAPI.Controllers
     {
         private readonly VoltaPetsContext _context;
         private readonly Cloudinary _cloudinary;
-        private readonly IConfiguration _config;
 
-        public MascotaController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary)
+        public MascotaController(VoltaPetsContext context, Cloudinary cloudinary)
         {
             _context = context;
-            _config = config;
             _cloudinary = cloudinary;
         }
 

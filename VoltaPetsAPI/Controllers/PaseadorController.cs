@@ -701,8 +701,81 @@ namespace VoltaPetsAPI.Controllers
             return NoContent();
 
         }
-        
-        
+
+
+
+        /*
+        [HttpGet]
+        [Route("Obtener")]
+        [Authorize(Policy ="Tutor")]
+        public async Task<IActionResult> ObtenerPaseadoresCercanos(UbicacionVM ubicacionVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            /*
+            
+            //obtener coordenadas API
+             
+            var ubicacion = await _context.Ubicaciones
+                .AsNoTracking()
+                .FirstOrDefaultAsync(ub => ub.CodigoComuna == ubicacionVM.CodigoComuna && ub.Direccion == ubicacionVM.Direccion);
+
+            if(ubicacion == null)
+            {
+
+            }
+            
+
+            var paseadores = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .Include(p => p.ExperienciaPaseador)
+                .Include(p => p.Paseos)
+                .Include(p => p.Usuario)
+                .ThenInclude(u => u.Imagen)
+                .Include(p => p.Ubicacion)
+                .Where(p => p.Ubicacion.CodigoComuna == ubicacionVM.CodigoComuna && p.Activado && p.Tarifas != null && p.PerroAceptado != null)
+                .Select(p => new Paseador
+                {
+                    Nombre = p.Nombre,
+                    Descripcion = p.Descripcion,
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        Descripcion = p.ExperienciaPaseador.Descripcion
+                    },
+                    Usuario = new Usuario
+                    {
+                        Imagen = new Imagen
+                        {
+                            Path = p.Usuario.Imagen.Path,
+                            Url = p.Usuario.Imagen.Url
+                        }
+                    },
+                    PerroAceptado = new PerroAceptado
+                    {
+                        TamanioGigante = p.PerroAceptado.TamanioGigante,
+                        TamanioGrande = p.PerroAceptado.TamanioGrande,
+                        TamanioMediano = p.PerroAceptado.TamanioMediano,
+                        TamanioPequenio = p.PerroAceptado.TamanioPequenio,
+                        TamanioToy = p.PerroAceptado.TamanioToy,
+                        CantidadPerro = p.PerroAceptado.CantidadPerro
+                    },
+                    Tarifas = p.Tarifas,
+                    Paseos = p.Paseos
+
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+
+
+
+
+        }
+
+    */
 
         /*
         

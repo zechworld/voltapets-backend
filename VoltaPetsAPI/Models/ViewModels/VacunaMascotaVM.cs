@@ -11,7 +11,7 @@ namespace VoltaPetsAPI.Models.ViewModels
 
         public DateTime? FechaVacunacion { get; set; }
 
-        public bool? Obligatoria { get; set; }
+        public bool Obligatoria { get; set; }
 
         //FK Vacuna
         [Required(ErrorMessage = "No se recibió codigo vacuna")]
@@ -20,8 +20,6 @@ namespace VoltaPetsAPI.Models.ViewModels
         //FK Mascota
         [Required(ErrorMessage = "No se recibió codigo mascota")]
         public int? CodigoMascota { get; set; }
-
-        public bool HasImagen { get; set; }
 
         public Imagen Imagen { get; set; }
     }
