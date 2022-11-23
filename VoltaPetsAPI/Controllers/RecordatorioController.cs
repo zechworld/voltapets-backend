@@ -31,7 +31,7 @@ namespace VoltaPetsAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             Recordatorio recordatorio = new Recordatorio
             {
                 CodigoMascota = (int)recordatorioVM.CodigoMascota,
@@ -43,7 +43,7 @@ namespace VoltaPetsAPI.Controllers
             _context.Recordatorios.Add(recordatorio);
             var registroRecordatorio = await _context.SaveChangesAsync();
 
-            if(registroRecordatorio <= 0)
+            if (registroRecordatorio <= 0)
             {
                 return BadRequest(new { mensaje = "No se pudo registrar el recordatorio" });
             }
@@ -69,3 +69,4 @@ namespace VoltaPetsAPI.Controllers
 
     }
 }
+

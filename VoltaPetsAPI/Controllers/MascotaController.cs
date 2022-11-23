@@ -32,12 +32,11 @@ namespace VoltaPetsAPI.Controllers
             _cloudinary = cloudinary;
         }
 
-        
+
         [HttpPost]
         [Route("Registrar")]
         [Authorize(Policy = "Tutor")]
-        
-        public  async Task<IActionResult> RegistrarMascota(MascotaVM mascotaVM)
+        public async Task<IActionResult> RegistrarMascota(MascotaVM mascotaVM)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +57,7 @@ namespace VoltaPetsAPI.Controllers
             //validar que la fecha de nacimiento o adopción no implique una edad mayor a 30 años
             DateTime fechaMinimaPermitida = DateTime.Now - TimeSpan.FromDays(10950);
 
-            if(mascotaVM.FechaNacimiento <= fechaMinimaPermitida)
+            if (mascotaVM.FechaNacimiento <= fechaMinimaPermitida)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                 return BadRequest(new { mensaje = "Ingresa una fecha de nacimiento o adopción real (No es posible que un perro tenga más de 30 años)" });
@@ -83,7 +82,7 @@ namespace VoltaPetsAPI.Controllers
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                 return BadRequest(new { mensaje = $"La edad ingresada no puede ser menor a {tiempoMascota} años, correspondiente al tiempo de adopcion" });
-            }            
+            }
 
             if (mascotaVM.IsFechaNacimiento)
             {
@@ -96,13 +95,13 @@ namespace VoltaPetsAPI.Controllers
             if (mascotaVM.IsFechaNacimiento)
             {
                 grupoEtario = await _context.GrupoEtarios.FirstOrDefaultAsync(gpe => gpe.EdadInferior <= tiempoMascota && gpe.EdadSuperior > tiempoMascota);
-                
+
                 if (grupoEtario == null)
                 {
                     ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                     return NotFound(new { mensaje = "No se pudo obtener el grupo etario de la mascota" });
                 }
-                
+
             }
             else
             {
@@ -113,9 +112,9 @@ namespace VoltaPetsAPI.Controllers
                     ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                     return NotFound(new { mensaje = "No se pudo obtener el grupo etario de la mascota" });
                 }
-                                
+
             }
-            
+
 
             //Obtener usuario logeado
             var claims = (ClaimsIdentity)User.Identity;
@@ -135,12 +134,12 @@ namespace VoltaPetsAPI.Controllers
             //obtener tutor asociado al usuario
             var tutor = await _context.Tutores.FirstOrDefaultAsync(t => t.CodigoUsuario == codigoUsuario);
 
-            if(tutor == null)
+            if (tutor == null)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                 return NotFound(new { mensaje = "No se pudo encontrar el tutor de la mascota" });
             }
-            
+
             //registrar mascota
             Mascota mascota = new Mascota
             {
@@ -157,9 +156,9 @@ namespace VoltaPetsAPI.Controllers
                 CodigoEstadoMascota = 1,
                 Imagen = mascotaVM.imagen
             };
-            
+
             //validar que la mascota no existe en la BD
-            if(await _context.Mascotas.Where(m => m.Nombre == mascota.Nombre && m.Esterilizado == mascota.Esterilizado && m.FechaNacimiento == mascota.FechaNacimiento && m.EdadRegistro == mascota.EdadRegistro && m.CodigoTutor == mascota.CodigoTutor && m.CodigoRaza == mascota.CodigoRaza && m.CodigoTamanio == mascota.CodigoTamanio && m.CodigoSexo == mascota.CodigoSexo && m.CodigoEtario == mascota.CodigoEtario).AnyAsync())
+            if (await _context.Mascotas.Where(m => m.Nombre == mascota.Nombre && m.Esterilizado == mascota.Esterilizado && m.FechaNacimiento == mascota.FechaNacimiento && m.EdadRegistro == mascota.EdadRegistro && m.CodigoTutor == mascota.CodigoTutor && m.CodigoRaza == mascota.CodigoRaza && m.CodigoTamanio == mascota.CodigoTamanio && m.CodigoSexo == mascota.CodigoSexo && m.CodigoEtario == mascota.CodigoEtario).AnyAsync())
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, mascotaVM.imagen);
                 return BadRequest(new { mensaje = "La mascota registrada ya existe" });
@@ -181,10 +180,10 @@ namespace VoltaPetsAPI.Controllers
                 codigoMascota = mascota.Id,
                 mensaje = "Mascota registrada con éxito"
             });
-            
 
-        }      
-        
+
+        }
+
         [HttpGet]
         [Route("Obtener/{codigoMascota:int}")]
         [Authorize(Policy = "Tutor")]
@@ -225,14 +224,14 @@ namespace VoltaPetsAPI.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
-            if(mascota == null)
+            if (mascota == null)
             {
                 return BadRequest(new { mensaje = "No se pudo obtener a la mascota" });
             }
 
             double edadMascota = 0.0;
 
-            if(mascota.EdadRegistro == null)
+            if (mascota.EdadRegistro == null)
             {
                 edadMascota = CalcularAnios(mascota.FechaNacimiento);
             }
@@ -264,14 +263,14 @@ namespace VoltaPetsAPI.Controllers
             var claims = (ClaimsIdentity)User.Identity;
             int codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
 
-            if(codigoUsuario == 0)
+            if (codigoUsuario == 0)
             {
-                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" } );
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
             }
 
             var tutor = await _context.Tutores.FirstOrDefaultAsync(t => t.CodigoUsuario == codigoUsuario);
 
-            if(tutor == null)
+            if (tutor == null)
             {
                 return NotFound(new { mensaje = "No se pudo encontrar al tutor" });
             }
@@ -333,7 +332,7 @@ namespace VoltaPetsAPI.Controllers
             //validar edad mascota
             var tiempoMascota = CalcularAnios(mascotaVM.FechaNacimiento);
 
-            if(mascotaVM.EdadRegistro > 0 && !mascotaVM.IsYear)
+            if (mascotaVM.EdadRegistro > 0 && !mascotaVM.IsYear)
             {
                 mascotaVM.EdadRegistro = ObtenerEdadAnios((double)mascotaVM.EdadRegistro);
             }
@@ -353,7 +352,7 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = $"La edad ingresada no puede ser menor a {tiempoMascota} años, correspondiente al tiempo de adopcion" });
             }
 
-            if(!mascotaVM.IsFechaNacimiento && (tiempoMascota + (double)mascotaVM.EdadRegistro) < 0.5)
+            if (!mascotaVM.IsFechaNacimiento && (tiempoMascota + (double)mascotaVM.EdadRegistro) < 0.5)
             {
                 return BadRequest(new { mensaje = "No se permiten mascotas menores a 6 meses de edad" });
             }
@@ -390,7 +389,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener mascota a editar
             var mascota = await _context.Mascotas.FindAsync(codigoMascota);
 
-            if(mascota == null)
+            if (mascota == null)
             {
                 return NotFound(new { mensaje = "No se pudo encontrar a la mascota" });
             }
@@ -440,12 +439,12 @@ namespace VoltaPetsAPI.Controllers
 
             var mascota = await _context.Mascotas
                 .Include(m => m.Imagen)
-                .FirstOrDefaultAsync(m=> m.Id == codigoMascota);
+                .FirstOrDefaultAsync(m => m.Id == codigoMascota);
 
-            if(mascota == null)
+            if (mascota == null)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagenVM.ToImagen());
-                return NotFound(new {mensaje = "No se pudo obtener a la mascota"});
+                return NotFound(new { mensaje = "No se pudo obtener a la mascota" });
             }
 
             string imagenAnteriorPublicId = mascota.Imagen.Public_Id;
@@ -456,7 +455,7 @@ namespace VoltaPetsAPI.Controllers
 
             var modificacionImagen = await _context.SaveChangesAsync();
 
-            if(modificacionImagen <= 0)
+            if (modificacionImagen <= 0)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagenVM.ToImagen());
                 return BadRequest(new { mensaje = "No se pudo cambiar la imagen de la mascota" });
@@ -471,16 +470,9 @@ namespace VoltaPetsAPI.Controllers
         }
 
 
-
-
-
-
-
-
-
         private double ObtenerEdadAnios(double edadMes)
         {
-             var edadAnios = edadMes / 12;
+            var edadAnios = edadMes / 12;
 
             if (edadAnios < 1)
             {
@@ -500,16 +492,15 @@ namespace VoltaPetsAPI.Controllers
 
             if (anios < 1)
             {
-                return Math.Round(anios,2,MidpointRounding.ToZero);
+                return Math.Round(anios, 2, MidpointRounding.ToZero);
             }
             else
             {
                 return Math.Truncate(anios);
-            }           
+            }
 
         }
 
-        
         /*
         
         private int CalcularEdad(DateTime fechaNacimiento)
@@ -539,10 +530,5 @@ namespace VoltaPetsAPI.Controllers
         }
 
         */
-
-
-
-
-
     }
 }

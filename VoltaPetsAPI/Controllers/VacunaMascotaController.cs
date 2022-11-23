@@ -49,6 +49,7 @@ namespace VoltaPetsAPI.Controllers
                 .Select(vm => new VacunaMascota
                 {
                     FechaVacunacion = vm.FechaVacunacion,
+                    CodigoVacuna = vm.CodigoVacuna,
                     CodigoMascota = vm.CodigoMascota,
                     Vacuna = new Vacuna
                     {
