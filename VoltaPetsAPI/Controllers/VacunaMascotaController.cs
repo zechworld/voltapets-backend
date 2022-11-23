@@ -57,7 +57,7 @@ namespace VoltaPetsAPI.Controllers
                         Descripcion = vm.Vacuna.Descripcion,
                         Obligatoria = vm.Vacuna.Obligatoria
                     },
-                    Imagen = vm.Imagen                    
+                    Imagen = vm.Imagen
                 }).AsNoTracking()
                 .ToListAsync();
 
@@ -87,7 +87,7 @@ namespace VoltaPetsAPI.Controllers
                     VacunaMascotaVM vacunaVM;
 
                     VacunaMascota vacuna = vacunasMascota.FirstOrDefault(vm => vm.CodigoVacuna == v.Id);
-                    
+
                     if (vacuna != null)
                     {
                         vacunaVM = new VacunaMascotaVM
@@ -117,7 +117,7 @@ namespace VoltaPetsAPI.Controllers
                         vacunasMascotaVM.Add(vacunaVM);
                     }
                 }
-            }                                           
+            }
 
             return Ok(vacunasMascotaVM);
 
