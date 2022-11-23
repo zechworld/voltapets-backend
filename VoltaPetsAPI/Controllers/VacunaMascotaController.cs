@@ -9,6 +9,8 @@ using System;
 using VoltaPetsAPI.Data;
 using VoltaPetsAPI.Models.ViewModels;
 using VoltaPetsAPI.Models;
+using CloudinaryDotNet;
+using VoltaPetsAPI.Helpers;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -17,10 +19,12 @@ namespace VoltaPetsAPI.Controllers
     public class VacunaMascotaController : ControllerBase
     {
         private readonly VoltaPetsContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public VacunaMascotaController(VoltaPetsContext context)
+        public VacunaMascotaController(VoltaPetsContext context, Cloudinary cloudinary)
         {
             _context = context;
+            _cloudinary = cloudinary;
         }
 
         [HttpGet]
@@ -145,6 +149,10 @@ namespace VoltaPetsAPI.Controllers
 
             if (!ModelState.IsValid)
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(ModelState);
             }
 
@@ -152,11 +160,19 @@ namespace VoltaPetsAPI.Controllers
 
             if (codigoMascota == null)
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(new { mensaje = "No se recibio el codigo de la mascota" });
             }
 
             if (!vacunasVM.TrueForAll(v => v.CodigoMascota == codigoMascota))
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(new { mensaje = "Error: Existe una vacuna con un codigo de mascota diferente" });
             }
 
@@ -164,6 +180,10 @@ namespace VoltaPetsAPI.Controllers
 
             if (mascota == null)
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(new { mensaje = "No se pudo obtener la mascota" });
             }
 
@@ -186,6 +206,10 @@ namespace VoltaPetsAPI.Controllers
             {
                 if (CalcularAnios((DateTime)vacunaVM.FechaVacunacion) > Math.Round((edadMascota - tiempoMinimoPrimeraVacunacion), 2, MidpointRounding.ToZero))
                 {
+                    foreach (var vacVM in vacunasVM)
+                    {
+                        ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                    }
                     return BadRequest(new { mensaje = "La fecha de vacunación no puede ser una fecha anterior a las 6 semanas de vida de la mascota" });
                 }
             }
@@ -193,16 +217,24 @@ namespace VoltaPetsAPI.Controllers
             //validar fecha maxima de vacunacion
             if (vacunasVM.Where(v => v.FechaVacunacion > DateTime.Now.Date).Any())
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(new { mensaje = "La fecha de vacunación no puede ser una fecha futura" });
             }
 
             //validar que vacuna obligatoria tiene imagen de verificacion asociada
             foreach (var vacunaVM in vacunasVM)
             {
-                var vacuna = await _context.Vacunas.AsNoTracking().FirstOrDefaultAsync(v => v.Id == vacunaVM.CodigoVacuna);
+                //var vacuna = await _context.Vacunas.AsNoTracking().FirstOrDefaultAsync(v => v.Id == vacunaVM.CodigoVacuna);
 
-                if (!(vacuna.Obligatoria && vacunaVM.HasImagen))
+                if (vacunaVM.Obligatoria && vacunaVM.Imagen == null)
                 {
+                    foreach (var vacVM in vacunasVM)
+                    {
+                        ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                    }
                     return BadRequest(new { mensaje = "No se cargo imagen de verificacion en vacunas obligatorias" });
                 }
             }
@@ -220,14 +252,16 @@ namespace VoltaPetsAPI.Controllers
                     {
                         CodigoMascota = (int)vacunaVM.CodigoMascota,
                         CodigoVacuna = (int)vacunaVM.CodigoVacuna,
-                        FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion
-                    };
+                        FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion,
+                        Imagen = vacunaVM.Imagen
+                };
 
                     vacunasMascota.Add(vacunaMascota);
                 }
                 else
                 {
                     vacunaMascota.FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion;
+                    vacunaMascota.Imagen = vacunaVM.Imagen;
 
                     vacunasMascota.Add(vacunaMascota);
                 }
@@ -252,6 +286,10 @@ namespace VoltaPetsAPI.Controllers
 
             if (registroVacunas <= 0)
             {
+                foreach (var vacVM in vacunasVM)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, vacVM.Imagen);
+                }
                 return BadRequest(new { mensaje = "No se pudo registrar las vacunas de la mascota" });
             }
 

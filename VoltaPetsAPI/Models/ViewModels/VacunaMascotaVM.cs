@@ -21,8 +21,6 @@ namespace VoltaPetsAPI.Models.ViewModels
         [Required(ErrorMessage = "No se recibió codigo mascota")]
         public int? CodigoMascota { get; set; }
 
-        public bool HasImagen { get; set; }
-
         public Imagen Imagen { get; set; }
     }
 }
