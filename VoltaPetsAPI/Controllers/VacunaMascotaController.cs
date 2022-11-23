@@ -176,7 +176,7 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = "Error: Existe una vacuna con un codigo de mascota diferente" });
             }
 
-            var mascota = await _context.Mascotas.FindAsync((int)codigoMascota);
+            var mascota = await _context.Mascotas.Include(m => m.VacunaMascotas).FirstOrDefaultAsync(m => m.Id == (int)codigoMascota);
 
             if (mascota == null)
             {
@@ -240,35 +240,48 @@ namespace VoltaPetsAPI.Controllers
             }
 
             //Preparar registro de vacunas mascota
-            List<VacunaMascota> vacunasMascota = new List<VacunaMascota>();
-
-            foreach (var vacunaVM in vacunasVM)
+            if (!mascota.VacunaMascotas.Any())
             {
-                var vacunaMascota = await _context.VacunaMascotas.FirstOrDefaultAsync(vm => vm.CodigoMascota == vacunaVM.CodigoMascota && vm.CodigoVacuna == vacunaVM.CodigoVacuna);
-
-                if (vacunaMascota == null)
+                foreach (var vacunaVM in vacunasVM)
                 {
-                    vacunaMascota = new VacunaMascota
+                    var vacunaMascota = new VacunaMascota
                     {
                         CodigoMascota = (int)vacunaVM.CodigoMascota,
                         CodigoVacuna = (int)vacunaVM.CodigoVacuna,
                         FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion,
                         Imagen = vacunaVM.Imagen
-                };
+                    };
 
-                    vacunasMascota.Add(vacunaMascota);
-                }
-                else
-                {
-                    vacunaMascota.FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion;
-                    vacunaMascota.Imagen = vacunaVM.Imagen;
-
-                    vacunasMascota.Add(vacunaMascota);
+                    mascota.VacunaMascotas.Add(vacunaMascota);
                 }
             }
+            else
+            {
+                foreach (var vacunaVM in vacunasVM)
+                {
+                    var vacunaMascota = mascota.VacunaMascotas
+                        .FirstOrDefault(vm => vm.CodigoMascota == vacunaVM.CodigoMascota && vm.CodigoVacuna == vacunaVM.CodigoVacuna);
 
-            //registrar vacunas de la mascota
-            mascota.VacunaMascotas = vacunasMascota;
+                    if (vacunaMascota == null)
+                    {
+                        vacunaMascota = new VacunaMascota
+                        {
+                            CodigoMascota = (int)vacunaVM.CodigoMascota,
+                            CodigoVacuna = (int)vacunaVM.CodigoVacuna,
+                            FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion,
+                            Imagen = vacunaVM.Imagen
+                        };
+
+                        mascota.VacunaMascotas.Add(vacunaMascota);
+                    }
+                    else
+                    {
+                        vacunaMascota.FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion;
+                        vacunaMascota.Imagen = vacunaVM.Imagen;
+
+                    }
+                }
+            }
 
             /*
             //registrar vacunas de la mascota opcion 2
@@ -282,6 +295,27 @@ namespace VoltaPetsAPI.Controllers
             }
             */
 
+            //cambiar estado mascota si es que tiene todas sus vacunas obligatorias
+            List<Vacuna> vacunasObligatorias = await _context.Vacunas.Where(v => v.Obligatoria == true).AsNoTracking().ToListAsync();
+
+            if(vacunasObligatorias != null && vacunasObligatorias.Count > 0)
+            {
+                foreach (var vacunaOb in vacunasObligatorias)
+                {                    
+                    if(mascota.VacunaMascotas.Where(vcm => vcm.CodigoVacuna == vacunaOb.Id).Any())
+                    {
+                        vacunasObligatorias.Remove(vacunaOb);
+                    }
+                }
+
+                if(vacunasObligatorias.Count == 0)
+                {
+                    mascota.CodigoEstadoMascota = 2;
+                }
+
+            }
+
+            //registrar vacunas de la mascota
             var registroVacunas = await _context.SaveChangesAsync();
 
             if (registroVacunas <= 0)
