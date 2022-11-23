@@ -300,15 +300,17 @@ namespace VoltaPetsAPI.Controllers
 
             if(vacunasObligatorias != null && vacunasObligatorias.Count > 0)
             {
+                int match = 0;
+
                 foreach (var vacunaOb in vacunasObligatorias)
                 {                    
                     if(mascota.VacunaMascotas.Where(vcm => vcm.CodigoVacuna == vacunaOb.Id).Any())
                     {
-                        vacunasObligatorias.Remove(vacunaOb);
+                        match++;
                     }
                 }
 
-                if(vacunasObligatorias.Count == 0)
+                if(vacunasObligatorias.Count == match)
                 {
                     mascota.CodigoEstadoMascota = 2;
                 }
