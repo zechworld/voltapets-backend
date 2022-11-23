@@ -183,7 +183,7 @@ namespace VoltaPetsAPI.Controllers
 
             foreach (var vacunaVM in vacunasVM)
             {
-                if (CalcularAnios((DateTime)vacunaVM.FechaVacunacion) > (edadMascota - tiempoMinimoPrimeraVacunacion))
+                if (CalcularAnios((DateTime)vacunaVM.FechaVacunacion) > Math.Round((edadMascota - tiempoMinimoPrimeraVacunacion), 2, MidpointRounding.ToZero))
                 {
                     return BadRequest(new { mensaje = "La fecha de vacunación no puede ser una fecha anterior a las 6 semanas de vida de la mascota" });
                 }
