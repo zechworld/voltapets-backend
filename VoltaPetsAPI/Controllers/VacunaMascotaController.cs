@@ -239,6 +239,9 @@ namespace VoltaPetsAPI.Controllers
                 }
             }
 
+            //
+            List<Imagen> imagenesVacunaAnterior = new List<Imagen>();
+
             //Preparar registro de vacunas mascota
             if (!mascota.VacunaMascotas.Any())
             {
@@ -276,6 +279,10 @@ namespace VoltaPetsAPI.Controllers
                     }
                     else
                     {
+                        if (vacunaVM.Obligatoria)
+                        {
+                            imagenesVacunaAnterior.Add(vacunaVM.Imagen);
+                        }
                         vacunaMascota.FechaVacunacion = (DateTime)vacunaVM.FechaVacunacion;
                         vacunaMascota.Imagen = vacunaVM.Imagen;
 
@@ -329,6 +336,14 @@ namespace VoltaPetsAPI.Controllers
                 return BadRequest(new { mensaje = "No se pudo registrar las vacunas de la mascota" });
             }
 
+            if(imagenesVacunaAnterior.Count() > 0 && imagenesVacunaAnterior != null)
+            {
+                foreach (var imagen in imagenesVacunaAnterior)
+                {
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen);
+                }
+            }
+            
             return Ok(new { mensaje = "Las vacunas de la mascota se registaron con éxito" });
 
         }
