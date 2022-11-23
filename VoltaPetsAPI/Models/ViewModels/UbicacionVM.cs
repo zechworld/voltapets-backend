@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models.ViewModels
         public string Direccion { get; set; }
 
         //FK Comuna
-        [Required(ErrorMessage = "se requiere que seleccione una comuna"))]
+        [Required(ErrorMessage = "se requiere que seleccione una comuna")]
         public int? CodigoComuna { get; set; }
 
     }
