@@ -827,6 +827,7 @@ namespace VoltaPetsAPI.Controllers
                     },
                     ExperienciaPaseador =
                     {
+                        Id = p.ExperienciaPaseador.Id,
                         Descripcion = p.ExperienciaPaseador.Descripcion
                     }
                 })
@@ -839,6 +840,44 @@ namespace VoltaPetsAPI.Controllers
             }
 
             return Ok(paseadores);
+
+        }
+
+        [HttpPut]
+        [Route("Activar/{id:int}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> ActivarPaseadorPostulante(int id, int codigoExperiencia)
+        {
+            var experienciaPaseador = await _context.ExperienciaPaseadores.FindAsync(codigoExperiencia);
+
+            if(experienciaPaseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener la experiencia para el paseador" });
+            }
+
+            if (experienciaPaseador.Id == 1)
+            {
+                return Ok(new { mensaje = "No se activó la cuenta del paseador ya que no se le asignó la experiencia necesaria para realizar paseos" });
+            }
+
+            var paseador = await _context.Paseadores.FindAsync(id);
+
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }                       
+
+            paseador.ExperienciaPaseador = experienciaPaseador;
+            paseador.Activado = true;
+
+            var modificacionExperiencia = await _context.SaveChangesAsync();
+
+            if(modificacionExperiencia <= 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo cambiar la experiencia para el paseador" });
+            }
+
+            return NoContent();
 
         }
 
