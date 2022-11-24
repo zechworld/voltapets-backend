@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models.User
         [Required]
         public int CodigoUsuario { get; set; }
 
-        [Required]
+        //[Required]
         public string Public_Id { get; set; }
 
         [Required]
