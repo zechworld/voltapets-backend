@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -701,12 +702,9 @@ namespace VoltaPetsAPI.Controllers
             return NoContent();
 
         }
-
-
-
-        /*
+        
         [HttpGet]
-        [Route("Obtener")]
+        [Route("ObtenerCercanos")]
         [Authorize(Policy ="Tutor")]
         public async Task<IActionResult> ObtenerPaseadoresCercanos(UbicacionVM ubicacionVM)
         {
@@ -726,20 +724,23 @@ namespace VoltaPetsAPI.Controllers
             {
 
             }
-            
+            */
 
             var paseadores = await _context.Paseadores
                 .Include(p => p.PerroAceptado)
                 .Include(p => p.Tarifas)
                 .Include(p => p.ExperienciaPaseador)
                 .Include(p => p.Paseos)
+                .ThenInclude(ps => ps.Calificacion)
                 .Include(p => p.Usuario)
                 .ThenInclude(u => u.Imagen)
                 .Include(p => p.Ubicacion)
                 .Where(p => p.Ubicacion.CodigoComuna == ubicacionVM.CodigoComuna && p.Activado && p.Tarifas != null && p.PerroAceptado != null)
                 .Select(p => new Paseador
                 {
+                    Id = p.Id,
                     Nombre = p.Nombre,
+                    Apellido = p.Apellido,
                     Descripcion = p.Descripcion,
                     ExperienciaPaseador = new ExperienciaPaseador
                     {
@@ -769,13 +770,79 @@ namespace VoltaPetsAPI.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+            if(paseadores == null || paseadores.Count() == 0)
+            {
+                return NotFound(new { mensaje = "No hay paseadores en la comuna" });
+            }
 
+            List<PaseadorVM> paseadoresVM = new List<PaseadorVM>();
 
+            foreach (var paseador in paseadores)
+            {
+                PaseadorVM paseadorVM = new PaseadorVM
+                {
+                    Id = paseador.Id,
+                    Nombre = paseador.Nombre,
+                    Apellido = paseador.Apellido,
+                    Descripcion = paseador.Descripcion,
+                    ExperienciaPaseador = paseador.ExperienciaPaseador,
+                    Usuario = paseador.Usuario,
+                    PerroAceptado = paseador.PerroAceptado,
+                    TarifaActual = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null),
+                    Calificacion = paseador.Paseos.Where(ps => ps.Calificado).Average(ps => ps.Calificacion.Valor)
+                };
 
+                paseadoresVM.Add(paseadorVM);
+            }
+
+            if(paseadoresVM.Count() == 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo obtener los paseadores de la comuna" });
+            }
+
+            return Ok(paseadoresVM);
 
         }
 
-    */
+        [HttpGet]
+        [Route("ObtenerPostulantes")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> ObtenerPaseadoresPostulantes()
+        {
+            var paseadores = await _context.Paseadores
+                .Include(p => p.Usuario)
+                .Include(p => p.ExperienciaPaseador)
+                .Where(p => p.Activado == false && p.ExperienciaPaseador.Id == 1)
+                .Select(p => new Paseador
+                {
+                    Id = p.Id,
+                    Rut = p.Rut,
+                    Dv = p.Dv,
+                    Nombre = p.Nombre,
+                    Apellido = p.Apellido,
+                    Telefono = p.Telefono,
+                    Usuario = new Usuario
+                    {
+                        Email = p.Usuario.Email
+                    },
+                    ExperienciaPaseador =
+                    {
+                        Descripcion = p.ExperienciaPaseador.Descripcion
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            if(paseadores == null || paseadores.Count() == 0)
+            {
+                return NotFound(new { mensaje = "No hay paseadores postulantes" });
+            }
+
+            return Ok(paseadores);
+
+        }
+
+
 
         /*
         
