@@ -531,8 +531,6 @@ namespace VoltaPetsAPI.Controllers
 
         }
 
-
-
         [HttpPut]
         [Route("EditarLaboral")]
         [Authorize(Policy = "Paseador")]
@@ -706,7 +704,7 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         [Route("ObtenerCercanos")]
         [Authorize(Policy ="Tutor")]
-        public async Task<IActionResult> ObtenerPaseadoresCercanos(UbicacionVM ubicacionVM)
+        public async Task<IActionResult> ObtenerPaseadoresCercanos(int codigoComuna)
         {
             if (!ModelState.IsValid)
             {
@@ -735,7 +733,7 @@ namespace VoltaPetsAPI.Controllers
                 .Include(p => p.Usuario)
                 .ThenInclude(u => u.Imagen)
                 .Include(p => p.Ubicacion)
-                .Where(p => p.Ubicacion.CodigoComuna == ubicacionVM.CodigoComuna && p.Activado && p.Tarifas != null && p.PerroAceptado != null)
+                .Where(p => p.Ubicacion.CodigoComuna == codigoComuna && p.Activado && p.Tarifas != null && p.PerroAceptado != null)
                 .Select(p => new Paseador
                 {
                     Id = p.Id,
@@ -789,7 +787,7 @@ namespace VoltaPetsAPI.Controllers
                     Usuario = paseador.Usuario,
                     PerroAceptado = paseador.PerroAceptado,
                     TarifaActual = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null),
-                    Calificacion = paseador.Paseos.Where(ps => ps.Calificado).Average(ps => ps.Calificacion.Valor)
+                    //Calificacion = paseador.Paseos.Where(ps => ps.Calificado).Average(ps => ps.Calificacion.Valor)
                 };
 
                 paseadoresVM.Add(paseadorVM);
