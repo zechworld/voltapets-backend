@@ -252,6 +252,12 @@ namespace VoltaPetsAPI.Controllers
             
         }
 
+        [HttpPost]
+        [Route('ForgetPassword')]
+        [AllowAnonymous]
+        public async Task<IActionResult> RecuperarContraseña([FromBody] PasswordVm) { }
+
+
         private string BuildToken(Usuario usuario)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
