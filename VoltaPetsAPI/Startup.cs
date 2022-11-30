@@ -92,6 +92,8 @@ namespace VoltaPetsAPI
             {
                 options.UseNpgsql(Configuration.GetConnectionString("VoltaPetsConnection"));
             });
+
+            services.AddTransient<IEmailService, SendGridMailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using VoltaPetsAPI.Models.ViewModels;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace VoltaPetsAPI.Controllers
 {
@@ -29,13 +30,15 @@ namespace VoltaPetsAPI.Controllers
         private readonly Cloudinary _cloudinary;
         private readonly VoltaPetsContext _context;
         private readonly IConfiguration _config;
+        private IEmailService _mailService;
 
-        public UsuarioController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary)
+        public UsuarioController(VoltaPetsContext context, IConfiguration config, Cloudinary cloudinary, IEmailService mailService)
         {
             _context = context;
             _config = config;
             _cloudinary = cloudinary;
-            
+            _mailService = mailService;
+
         }
 
         [HttpPost]
@@ -124,11 +127,12 @@ namespace VoltaPetsAPI.Controllers
                         email = usuario.Email,
                         imagen = usuario.Imagen
                     });
-                        
+
                 }
 
                 // Si es Tutor
-                if (usuario.CodigoRol == 3) {
+                if (usuario.CodigoRol == 3)
+                {
                     var tutor = await _context.Tutores
                         .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.Id);
 
@@ -143,15 +147,15 @@ namespace VoltaPetsAPI.Controllers
                     });
                 }
 
-                return NotFound(new { mensaje = "No se ha encontrado al usuario"});
+                return NotFound(new { mensaje = "No se ha encontrado al usuario" });
             }
 
-            return BadRequest(new {mensaje = "Ha ocurrido un error"});
+            return BadRequest(new { mensaje = "Ha ocurrido un error" });
         }
 
         [HttpPut]
         [Route("RegistrarImagen")]
-        [AllowAnonymous]               
+        [AllowAnonymous]
         public async Task<IActionResult> RegistrarImagenPerfil(UserImagen img)
         {
             if (!ModelState.IsValid)
@@ -173,7 +177,7 @@ namespace VoltaPetsAPI.Controllers
             imagen.Url = img.Url;
             imagen.Path = img.Path;
             imagen.Public_Id = img.Public_Id;
-            
+
 
             _context.Imagenes.Add(imagen);   //TODO: Eliminar
 
@@ -182,7 +186,7 @@ namespace VoltaPetsAPI.Controllers
 
             var modificacionImagen = await _context.SaveChangesAsync();
 
-            if(modificacionImagen <= 0)
+            if (modificacionImagen <= 0)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
                 return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
@@ -233,7 +237,7 @@ namespace VoltaPetsAPI.Controllers
             usuario.Imagen.Path = imagen.Path;
             var modificacionImagen = await _context.SaveChangesAsync();
 
-            if(modificacionImagen <= 0)
+            if (modificacionImagen <= 0)
             {
                 ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
@@ -249,14 +253,97 @@ namespace VoltaPetsAPI.Controllers
 
                 return NoContent();
             }
-            
+
         }
 
         [HttpPost]
-        [Route('ForgetPassword')]
+        [Route("ForgetPassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> RecuperarContraseña([FromBody] PasswordVm) { }
+        public async Task<IActionResult> RecuperarPwd([FromBody] ForgetPasswordVM pwd)
+        {
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(pwd.Email))
+                {
+                    return NotFound(new { mensaje = $"El correo {pwd.Email} no tiene un usuario asociado" });
+                }
 
+                var user = await _context.Usuarios
+                    .Include(user => user.Tutor)
+                    .Include(user => user.Paseador)
+                    .FirstOrDefaultAsync(user => user.Email.Equals(pwd.Email));
+
+                if (user != null)
+                {
+                    var nombre = "";
+
+                    if (user.CodigoRol == 2)
+                    {
+                        nombre = user.Paseador.Nombre;
+                    }
+                    else
+                    {
+                        nombre = user.Tutor.Nombre;
+                    }
+
+                    var token = BuildToken(user);
+                    var encodedToken = Encoding.UTF8.GetBytes(token);
+                    var validateToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+                    var url = $"{_config["AppUrl"]}/password/reset?email={pwd.Email}&token={validateToken}";
+                    var templateId = _config["SendGrid:PwdRecoveryTemplate"];
+
+                    EmailTemplateUser data = new EmailTemplateUser
+                    {
+                        Nombre = nombre,
+                        Url = url
+                    };
+
+                    await _mailService.SendEmailAsync(pwd.Email, templateId, data);
+                    return Ok();
+                }
+
+                return BadRequest(new { mensaje = $"El correo {pwd.Email} no tiene un usuario asociado" });
+            }
+            return BadRequest(new { mensaje = "Ha ocurrido un error con la solicitud" });
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPwd([FromBody] ResetPasswordVM pwd)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Usuarios.FirstOrDefaultAsync(user => user.Email.Equals(pwd.Email));
+
+                if (user == null)
+                {
+                    NotFound(new { mensaje = "No existe un usuario asociado a este correo" });
+                }
+
+                if (pwd.Password != pwd.ConfirmPassword)
+                {
+                    BadRequest(new { mensaje = "Las contraseñas no coinciden" });
+                }
+
+                var decodedToken = WebEncoders.Base64UrlDecode(pwd.Token);
+                string tokenNormal = Encoding.UTF8.GetString(decodedToken);
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(tokenNormal);
+                var decodedEmail = jwtToken.Claims.ToList()[0].Value;
+
+
+                if (user.Email == decodedEmail)
+                {
+                    user.Password = Encriptacion.GetSHA256(pwd.Password);
+                    var result = await _context.SaveChangesAsync();
+                    return NoContent();
+                }
+
+            }
+            return BadRequest(new { mensaje = "Ha ocurrido un error al restablecer las contraseñas" });
+        }
 
         private string BuildToken(Usuario usuario)
         {
