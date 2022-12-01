@@ -27,6 +27,33 @@ namespace VoltaPetsAPI.Controllers
             _context = context;
         }
 
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerPaseadores()
+        {
+            return Ok(await _context.Paseadores.Where(p => p.Activado == true).ToListAsync());
+        }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerPaseador(int id)
+        {
+            var paseador = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .FirstOrDefaultAsync(paseador => paseador.Id == id);
+
+            if (paseador == null)
+            {
+                return NotFound(new { mensaje = "No se ha podido encontrar el paseador" });
+            }
+
+            return Ok(paseador);
+        }
+
+
         [HttpPost]
         [Route("Registrar")]
         [AllowAnonymous]        

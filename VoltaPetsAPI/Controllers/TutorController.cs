@@ -28,7 +28,7 @@ namespace VoltaPetsAPI.Controllers
 
         [HttpPost]
         [Route("Registrar")]
-        [AllowAnonymous]       
+        [AllowAnonymous]
         public async Task<IActionResult> RegistrarTutor([FromBody] UserTutor userTutor)
         {
             if (!ModelState.IsValid)
@@ -85,8 +85,8 @@ namespace VoltaPetsAPI.Controllers
                     Longitud = rand.NextDouble(),                      //ELIMINAR
                     CodigoComuna = userTutor.CodigoComuna
                 };
-                
-            }          
+
+            }
 
             //Tutor
 
@@ -108,7 +108,7 @@ namespace VoltaPetsAPI.Controllers
             if (registroTutor <= 0)
             {
                 return BadRequest(new { mensaje = "No se pudo registrar el tutor" });
-                
+
             }
 
             return Ok(new
@@ -160,7 +160,7 @@ namespace VoltaPetsAPI.Controllers
                             Url = t.Usuario.Imagen.Url,
                             Path = t.Usuario.Imagen.Path
                         }
-                        
+
                     },
                     Ubicacion = new Ubicacion
                     {
@@ -183,7 +183,7 @@ namespace VoltaPetsAPI.Controllers
                 }).AsNoTracking()
                 .FirstOrDefaultAsync();
 
-            if(tutor == null)
+            if (tutor == null)
             {
                 return NotFound(new { mensaje = "No se pudo encontrar el Tutor" });
             }
@@ -236,7 +236,7 @@ namespace VoltaPetsAPI.Controllers
                 .Include(t => t.Ubicacion)
                 .FirstOrDefaultAsync(t => t.CodigoUsuario == codigoUsuario);
 
-            if(tutor == null)
+            if (tutor == null)
             {
                 return NotFound(new { mensaje = "No se pudo encontrar el Tutor" });
             }
@@ -280,7 +280,7 @@ namespace VoltaPetsAPI.Controllers
                         Longitud = longitud,
                         CodigoComuna = perfil.CodigoComuna
                     };
-                    
+
                 }
 
                 tutor.Ubicacion = ubicacionNueva;
@@ -288,7 +288,7 @@ namespace VoltaPetsAPI.Controllers
             }
 
             tutor.Telefono = perfil.Telefono;
-            tutor.Descripcion= perfil.Descripcion;
+            tutor.Descripcion = perfil.Descripcion;
 
             await _context.SaveChangesAsync();
 
@@ -296,11 +296,6 @@ namespace VoltaPetsAPI.Controllers
 
         }
 
-
-
-
-
-
-
     }
+
 }
