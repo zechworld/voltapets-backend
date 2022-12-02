@@ -27,9 +27,58 @@ namespace VoltaPetsAPI.Controllers
             _context = context;
         }
 
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerPaseadores()
+        {
+            var paseadores = await _context.Paseadores.Where(p => p.Activado == true).ToListAsync();
+
+            if (paseadores == null)
+            {
+                return NotFound(new { mensaje = "No hay paseadores registrados en la aplicación" });
+            }
+
+
+            return Ok(paseadores);
+        }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObtenerPaseador(int id)
+        {
+            var paseador = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .Include(p => p.ExperienciaPaseador)
+                .Include(p => p.Paseos)
+                .Include(p => p.Ubicacion)
+                .Include(p => p.Usuario)
+                .ThenInclude(u => u.Imagen)
+                .FirstOrDefaultAsync(paseador => paseador.Id == id);
+
+            if (paseador == null)
+            {
+                return NotFound(new { mensaje = "No se ha podido encontrar el paseador" });
+            }
+
+            return Ok(new
+            {
+                nombreCompleto = $"{paseador.Nombre} {paseador.Apellido}",
+                descripcion = paseador.Descripcion,
+                experiencia = paseador.ExperienciaPaseador,
+                perrosAceptados = paseador.PerroAceptado,
+                tarifas = paseador.Tarifas,
+                imagen = paseador.Usuario.Imagen.Url + paseador.Usuario.Imagen.Path,
+                ubicacion = paseador.Ubicacion
+            });
+        }
+
+
         [HttpPost]
         [Route("Registrar")]
-        [AllowAnonymous]        
+        [AllowAnonymous]
         public async Task<IActionResult> RegistrarPaseador([FromBody] UserPaseador userPaseador)
         {
             if (!ModelState.IsValid)
@@ -71,14 +120,14 @@ namespace VoltaPetsAPI.Controllers
             if (userPaseador.Departamento == 0)
             {
                 userPaseador.Departamento = null;
-            }                       
+            }
 
             //Buscar ubicacion en la BD            
             var ubicacion = await _context.Ubicaciones
                 .FirstOrDefaultAsync(ub => ub.CodigoComuna == userPaseador.CodigoComuna && ub.Direccion.Equals(userPaseador.Direccion) && ub.Departamento.Equals(userPaseador.Departamento)); // Agregar validacion de latitud y longitud
 
             //Verificar si no existe la ubicacion
-            if(ubicacion == null)
+            if (ubicacion == null)
             {
                 Random rand = new Random(); //ELIMINAR DESPUES DE USAR API ---------------------------------
                 ubicacion = new Ubicacion
@@ -106,7 +155,7 @@ namespace VoltaPetsAPI.Controllers
                 Ubicacion = ubicacion,
                 CodigoExperiencia = 1
 
-            };               
+            };
 
             _context.Paseadores.Add(paseador);
             var registroPaseador = await _context.SaveChangesAsync();
@@ -115,7 +164,7 @@ namespace VoltaPetsAPI.Controllers
             if (registroPaseador <= 0)
             {
                 return BadRequest(new { mensaje = "No se pudo registrar el paseador" });
-                
+
             }
 
             return Ok(new
@@ -169,7 +218,7 @@ namespace VoltaPetsAPI.Controllers
                             Url = p.Usuario.Imagen.Url,
                             Path = p.Usuario.Imagen.Path
                         }
-                        
+
                     },
                     ExperienciaPaseador = new ExperienciaPaseador
                     {
@@ -213,10 +262,10 @@ namespace VoltaPetsAPI.Controllers
                 .Include(ps => ps.Calificacion)
                 .Where(ps => ps.CodigoPaseador == paseador.Id && ps.Calificado)
                 .AverageAsync(ps => ps.Calificacion.Valor);
-            }        
+            }
 
-            return Ok(new 
-            { 
+            return Ok(new
+            {
                 Nombre = paseador.Nombre,
                 Apellido = paseador.Apellido,
                 Descripcion = paseador.Descripcion,
@@ -329,7 +378,7 @@ namespace VoltaPetsAPI.Controllers
                     .FirstOrDefaultAsync(ub => ub.Direccion.Equals(perfil.Direccion) && ub.Departamento.Equals(perfil.Departamento) && ub.CodigoComuna == perfil.CodigoComuna);
 
                 //Verificar si no existe la ubicacion nueva en la base de datos
-                if(ubicacionNueva == null)
+                if (ubicacionNueva == null)
                 {
                     //API de GeoCordenadas -------------------------------------------
                     Random random = new Random();
@@ -379,7 +428,7 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         [Route("Laboral")]
         [Authorize(Policy = "Paseador")]
-        public  async Task<IActionResult> ObtenerParametrosLaboralesActual()
+        public async Task<IActionResult> ObtenerParametrosLaboralesActual()
         {
             //Obtener usuario logeado
             var claims = (ClaimsIdentity)User.Identity;
@@ -415,13 +464,13 @@ namespace VoltaPetsAPI.Controllers
                 return NotFound(new { mensaje = "No se pudo encontrar el Paseador" });
             }
 
-            
+
             //obtener tarifa
             var tarifa = await _context.Tarifas
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.Id && t.FechaTermino == null);
 
-            if(tarifa == null)
+            if (tarifa == null)
             {
                 tarifa = new Tarifa()
                 {
@@ -439,7 +488,7 @@ namespace VoltaPetsAPI.Controllers
                 .FirstOrDefaultAsync(pa => pa.CodigoPaseador == paseador.CodigoPaseador);
             */
 
-            if(paseador.PerroAceptado == null)
+            if (paseador.PerroAceptado == null)
             {
                 paseador.PerroAceptado = new PerroAceptado()
                 {
@@ -451,7 +500,7 @@ namespace VoltaPetsAPI.Controllers
                     CantidadPerro = 0
                 };
             }
-            
+
 
             return Ok(new
             {
@@ -466,7 +515,7 @@ namespace VoltaPetsAPI.Controllers
                 cantidad = paseador.PerroAceptado.CantidadPerro
 
             });
-            
+
         }
 
         [HttpGet]
@@ -477,7 +526,7 @@ namespace VoltaPetsAPI.Controllers
             var claims = (ClaimsIdentity)User.Identity;
             var codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
 
-            if(codigoUsuario == 0)
+            if (codigoUsuario == 0)
             {
                 return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
             }
@@ -510,8 +559,8 @@ namespace VoltaPetsAPI.Controllers
                 })
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
-                
-            if(paseador == null)
+
+            if (paseador == null)
             {
                 return NotFound(new { mensaje = "No se pudo obtener al paseador" });
             }
@@ -580,7 +629,7 @@ namespace VoltaPetsAPI.Controllers
                     }
                 }).FirstOrDefaultAsync();
 
-            if(paseador == null)
+            if (paseador == null)
             {
                 return NotFound(new { mensaje = "No se pudo obtener al paseador" });
             }
@@ -591,7 +640,7 @@ namespace VoltaPetsAPI.Controllers
             }
 
             //validar parametros con restricciones de experiencia paseador
-            if(parametros.TamanioMediano != paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano)
+            if (parametros.TamanioMediano != paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano)
             {
                 return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Mediano de mascota" });
             }
@@ -624,7 +673,7 @@ namespace VoltaPetsAPI.Controllers
             //preparar datos para actualizar
 
             //PerroAceptado
-            if(paseador.PerroAceptado == null)
+            if (paseador.PerroAceptado == null)
             {
                 PerroAceptado primerPerroAceptado = new PerroAceptado
                 {
@@ -647,10 +696,10 @@ namespace VoltaPetsAPI.Controllers
                 paseador.PerroAceptado.TamanioToy = parametros.TamanioToy;
                 paseador.PerroAceptado.CantidadPerro = (int)parametros.CantidadPerro;
             }
-            
+
 
             //Tarifa
-            if(paseador.Tarifas == null)
+            if (paseador.Tarifas == null)
             {
                 Tarifa primeraTarifa = new Tarifa
                 {
@@ -666,13 +715,13 @@ namespace VoltaPetsAPI.Controllers
             else
             {
                 var tarifa = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null);
-                
-                if(tarifa == null)
+
+                if (tarifa == null)
                 {
                     return NotFound(new { mensaje = "No se pudo obtener la última tarifa del paseador" });
                 }
 
-                if(!(tarifa.Basico == parametros.Basico && tarifa.Juego == parametros.Juego && tarifa.Social == parametros.Social))
+                if (!(tarifa.Basico == parametros.Basico && tarifa.Juego == parametros.Juego && tarifa.Social == parametros.Social))
                 {
                     Tarifa nuevaTarifa = new Tarifa
                     {
@@ -692,7 +741,7 @@ namespace VoltaPetsAPI.Controllers
 
             var modificacionParametrosLaborales = await _context.SaveChangesAsync();
 
-            if(modificacionParametrosLaborales <= 0)
+            if (modificacionParametrosLaborales <= 0)
             {
                 return BadRequest(new { mensaje = "No se pudo editar los parámetros laborales del paseador" });
             }
@@ -700,10 +749,10 @@ namespace VoltaPetsAPI.Controllers
             return NoContent();
 
         }
-        
+
         [HttpGet]
         [Route("ObtenerCercanos")]
-        [Authorize(Policy ="Tutor")]
+        [Authorize(Policy = "Tutor")]
         public async Task<IActionResult> ObtenerPaseadoresCercanos(int codigoComuna)
         {
             if (!ModelState.IsValid)
@@ -768,7 +817,7 @@ namespace VoltaPetsAPI.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            if(paseadores == null || paseadores.Count() == 0)
+            if (paseadores == null || paseadores.Count() == 0)
             {
                 return NotFound(new { mensaje = "No hay paseadores en la comuna" });
             }
@@ -793,7 +842,7 @@ namespace VoltaPetsAPI.Controllers
                 paseadoresVM.Add(paseadorVM);
             }
 
-            if(paseadoresVM.Count() == 0)
+            if (paseadoresVM.Count() == 0)
             {
                 return BadRequest(new { mensaje = "No se pudo obtener los paseadores de la comuna" });
             }
@@ -832,7 +881,7 @@ namespace VoltaPetsAPI.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            if(paseadores == null || paseadores.Count() == 0)
+            if (paseadores == null || paseadores.Count() == 0)
             {
                 return NotFound(new { mensaje = "No hay paseadores postulantes" });
             }
@@ -848,7 +897,7 @@ namespace VoltaPetsAPI.Controllers
         {
             var experienciaPaseador = await _context.ExperienciaPaseadores.FindAsync(codigoExperiencia);
 
-            if(experienciaPaseador == null)
+            if (experienciaPaseador == null)
             {
                 return NotFound(new { mensaje = "No se pudo obtener la experiencia para el paseador" });
             }
@@ -860,17 +909,17 @@ namespace VoltaPetsAPI.Controllers
 
             var paseador = await _context.Paseadores.FindAsync(id);
 
-            if(paseador == null)
+            if (paseador == null)
             {
                 return NotFound(new { mensaje = "No se pudo obtener al paseador" });
-            }                       
+            }
 
             paseador.ExperienciaPaseador = experienciaPaseador;
             paseador.Activado = true;
 
             var modificacionExperiencia = await _context.SaveChangesAsync();
 
-            if(modificacionExperiencia <= 0)
+            if (modificacionExperiencia <= 0)
             {
                 return BadRequest(new { mensaje = "No se pudo cambiar la experiencia para el paseador" });
             }
