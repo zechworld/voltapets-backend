@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -102,7 +103,8 @@ namespace VoltaPetsAPI.Controllers
                 Telefono = userPaseador.Telefono,
                 Activado = false,
                 Usuario = usuario,
-                Ubicacion = ubicacion
+                Ubicacion = ubicacion,
+                CodigoExperiencia = 1
 
             };               
 
@@ -179,13 +181,13 @@ namespace VoltaPetsAPI.Controllers
                         Departamento = p.Ubicacion.Departamento,
                         Comuna = new Comuna
                         {
-                            CodigoComuna= p.Ubicacion.Comuna.CodigoComuna,
+                            Id = p.Ubicacion.Comuna.Id,
                             Descripcion = p.Ubicacion.Comuna.Descripcion,
                             Provincia = new Provincia
                             {
                                 Region = new Region
                                 {
-                                    CodigoRegion = p.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                                    Id = p.Ubicacion.Comuna.Provincia.Region.Id,
                                     Descripcion = p.Ubicacion.Comuna.Provincia.Region.Descripcion
                                 }
                             }
@@ -204,12 +206,12 @@ namespace VoltaPetsAPI.Controllers
             float calificacion = 0;
 
             //Revisar si existen calificaciones
-            if (await _context.Paseos.Where(ps => ps.CodigoPaseador == paseador.CodigoPaseador && ps.Calificado).AsNoTracking().AnyAsync())
+            if (await _context.Paseos.Where(ps => ps.CodigoPaseador == paseador.Id && ps.Calificado).AsNoTracking().AnyAsync())
             {
                 //obtener calificacion paseador
                 calificacion = await _context.Paseos
                 .Include(ps => ps.Calificacion)
-                .Where(ps => ps.CodigoPaseador == paseador.CodigoPaseador && ps.Calificado)
+                .Where(ps => ps.CodigoPaseador == paseador.Id && ps.Calificado)
                 .AverageAsync(ps => ps.Calificacion.Valor);
             }        
 
@@ -223,9 +225,9 @@ namespace VoltaPetsAPI.Controllers
                 Imagen = paseador.Usuario.Imagen,
                 Direccion = paseador.Ubicacion.Direccion,
                 Departamento = paseador.Ubicacion.Departamento,
-                CodigoComuna = paseador.Ubicacion.Comuna.CodigoComuna,
+                CodigoComuna = paseador.Ubicacion.Comuna.Id,
                 Comuna = paseador.Ubicacion.Comuna.Descripcion,
-                CodigoRegion = paseador.Ubicacion.Comuna.Provincia.Region.CodigoRegion,
+                CodigoRegion = paseador.Ubicacion.Comuna.Provincia.Region.Id,
                 Region = paseador.Ubicacion.Comuna.Provincia.Region.Descripcion,
                 Experencia = paseador.ExperienciaPaseador.Descripcion,
                 Calificacion = calificacion
@@ -417,7 +419,7 @@ namespace VoltaPetsAPI.Controllers
             //obtener tarifa
             var tarifa = await _context.Tarifas
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.CodigoPaseador && t.FechaTermino == null);
+                .FirstOrDefaultAsync(t => t.CodigoPaseador == paseador.Id && t.FechaTermino == null);
 
             if(tarifa == null)
             {
@@ -467,15 +469,417 @@ namespace VoltaPetsAPI.Controllers
             
         }
 
-        /*
-        [Route("EditarLaboral")]
-        [HttpPut]
-        public async Task<IActionResult> EditarParametrosLaboralesActual()
+        [HttpGet]
+        [Route("RestriccionLaboral")]
+        [Authorize(Policy = "Paseador")]
+        public async Task<IActionResult> ObtenerRestriccionesLaboralesActual()
         {
+            var claims = (ClaimsIdentity)User.Identity;
+            var codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
+
+            if(codigoUsuario == 0)
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            var paseador = await _context.Paseadores
+                .Include(p => p.ExperienciaPaseador)
+                .ThenInclude(exp => exp.RangoTarifa)
+                .Include(p => p.ExperienciaPaseador.PerroPermitido)
+                .Where(p => p.CodigoUsuario == codigoUsuario)
+                .Select(p => new Paseador
+                {
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        RangoTarifa = new RangoTarifa
+                        {
+                            BasicoInferior = p.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                            BasicoSuperior = p.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                            JuegoInferior = p.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                            JuegoSuperior = p.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                            SocialInferior = p.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                            SocialSuperior = p.ExperienciaPaseador.RangoTarifa.SocialSuperior
+                        },
+                        PerroPermitido = new PerroPermitido
+                        {
+                            TamanioMediano = p.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                            TamanioGrande = p.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                            TamanioGigante = p.ExperienciaPaseador.PerroPermitido.TamanioGigante
+                        }
+                    }
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+                
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }
+
+            return Ok(new
+            {
+                BasicoInferior = paseador.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                BasicoSuperior = paseador.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                JuegoInferior = paseador.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                JuegoSuperior = paseador.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                SocialInferior = paseador.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                SocialSuperior = paseador.ExperienciaPaseador.RangoTarifa.SocialSuperior,
+                TamanioMediano = paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                TamanioGrande = paseador.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                TamanioGigante = paseador.ExperienciaPaseador.PerroPermitido.TamanioGigante
+            });
 
         }
-        */
+
+        [HttpPut]
+        [Route("EditarLaboral")]
+        [Authorize(Policy = "Paseador")]
+        public async Task<IActionResult> EditarParametrosLaboralesActual(ParametroLaboralVM parametros)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var claims = (ClaimsIdentity)User.Identity;
+            var codigoUsuario = UsuarioConectado.ObtenerCodigo(claims);
+
+            if (codigoUsuario == 0)
+            {
+                return BadRequest(new { mensaje = "Error en obtener el codigo del usuario actual" });
+            }
+
+            var paseador = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .Include(p => p.ExperienciaPaseador)
+                .ThenInclude(exp => exp.RangoTarifa)
+                .Include(p => p.ExperienciaPaseador.PerroPermitido)
+                .Where(p => p.CodigoUsuario == codigoUsuario)
+                .Select(p => new Paseador
+                {
+                    PerroAceptado = p.PerroAceptado,
+                    Tarifas = p.Tarifas,
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        RangoTarifa = new RangoTarifa
+                        {
+                            BasicoInferior = p.ExperienciaPaseador.RangoTarifa.BasicoInferior,
+                            BasicoSuperior = p.ExperienciaPaseador.RangoTarifa.BasicoSuperior,
+                            JuegoInferior = p.ExperienciaPaseador.RangoTarifa.JuegoInferior,
+                            JuegoSuperior = p.ExperienciaPaseador.RangoTarifa.JuegoSuperior,
+                            SocialInferior = p.ExperienciaPaseador.RangoTarifa.SocialInferior,
+                            SocialSuperior = p.ExperienciaPaseador.RangoTarifa.SocialSuperior
+                        },
+                        PerroPermitido = new PerroPermitido
+                        {
+                            TamanioMediano = p.ExperienciaPaseador.PerroPermitido.TamanioMediano,
+                            TamanioGrande = p.ExperienciaPaseador.PerroPermitido.TamanioGrande,
+                            TamanioGigante = p.ExperienciaPaseador.PerroPermitido.TamanioGigante
+                        }
+                    }
+                }).FirstOrDefaultAsync();
+
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }
+
+            if (!paseador.Activado)
+            {
+                return BadRequest(new { mensaje = "No se puede editar los parámtros laborales con una cuenta de Paseador no activada" });
+            }
+
+            //validar parametros con restricciones de experiencia paseador
+            if(parametros.TamanioMediano != paseador.ExperienciaPaseador.PerroPermitido.TamanioMediano)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Mediano de mascota" });
+            }
+
+            if (parametros.TamanioGrande != paseador.ExperienciaPaseador.PerroPermitido.TamanioGrande)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Grande de mascota" });
+            }
+
+            if (parametros.TamanioGigante != paseador.ExperienciaPaseador.PerroPermitido.TamanioGigante)
+            {
+                return BadRequest(new { mensaje = "Su experiencia actual le impide seleccionar el tamaño Gigante de mascota" });
+            }
+
+            if (parametros.Basico < paseador.ExperienciaPaseador.RangoTarifa.BasicoInferior || parametros.Basico > paseador.ExperienciaPaseador.RangoTarifa.BasicoSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa de paseo de necesidades básicas se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            if (parametros.Juego < paseador.ExperienciaPaseador.RangoTarifa.JuegoInferior || parametros.Juego > paseador.ExperienciaPaseador.RangoTarifa.JuegoSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa de tiempo de juego se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            if (parametros.Social < paseador.ExperienciaPaseador.RangoTarifa.SocialInferior || parametros.Social > paseador.ExperienciaPaseador.RangoTarifa.SocialSuperior)
+            {
+                return BadRequest(new { mensaje = "La tarifa socialización con otras mascotas se encuentra fuera del rango permitido por su experiencia" });
+            }
+
+            //preparar datos para actualizar
+
+            //PerroAceptado
+            if(paseador.PerroAceptado == null)
+            {
+                PerroAceptado primerPerroAceptado = new PerroAceptado
+                {
+                    TamanioGigante = parametros.TamanioGigante,
+                    TamanioGrande = parametros.TamanioGrande,
+                    TamanioMediano = parametros.TamanioMediano,
+                    TamanioPequenio = parametros.TamanioPequenio,
+                    TamanioToy = parametros.TamanioToy,
+                    CantidadPerro = (int)parametros.CantidadPerro
+                };
+
+                paseador.PerroAceptado = primerPerroAceptado;
+            }
+            else
+            {
+                paseador.PerroAceptado.TamanioGigante = parametros.TamanioGigante;
+                paseador.PerroAceptado.TamanioGrande = parametros.TamanioGrande;
+                paseador.PerroAceptado.TamanioMediano = parametros.TamanioMediano;
+                paseador.PerroAceptado.TamanioPequenio = parametros.TamanioPequenio;
+                paseador.PerroAceptado.TamanioToy = parametros.TamanioToy;
+                paseador.PerroAceptado.CantidadPerro = (int)parametros.CantidadPerro;
+            }
+            
+
+            //Tarifa
+            if(paseador.Tarifas == null)
+            {
+                Tarifa primeraTarifa = new Tarifa
+                {
+                    Basico = (int)parametros.Basico,
+                    Juego = (int)parametros.Juego,
+                    Social = (int)parametros.Social,
+                    FechaRegistro = DateTime.Now,
+                    FechaTermino = null
+                };
+
+                paseador.Tarifas.Add(primeraTarifa);
+            }
+            else
+            {
+                var tarifa = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null);
+                
+                if(tarifa == null)
+                {
+                    return NotFound(new { mensaje = "No se pudo obtener la última tarifa del paseador" });
+                }
+
+                if(!(tarifa.Basico == parametros.Basico && tarifa.Juego == parametros.Juego && tarifa.Social == parametros.Social))
+                {
+                    Tarifa nuevaTarifa = new Tarifa
+                    {
+                        Basico = (int)parametros.Basico,
+                        Juego = (int)parametros.Juego,
+                        Social = (int)parametros.Social,
+                        FechaRegistro = DateTime.Now,
+                        FechaTermino = null
+                    };
+
+                    paseador.Tarifas.Add(nuevaTarifa);
+
+                    tarifa.FechaTermino = DateTime.Now;
+
+                }
+            }
+
+            var modificacionParametrosLaborales = await _context.SaveChangesAsync();
+
+            if(modificacionParametrosLaborales <= 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo editar los parámetros laborales del paseador" });
+            }
+
+            return NoContent();
+
+        }
         
+        [HttpGet]
+        [Route("ObtenerCercanos")]
+        [Authorize(Policy ="Tutor")]
+        public async Task<IActionResult> ObtenerPaseadoresCercanos(int codigoComuna)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            /*
+            
+            //obtener coordenadas API
+             
+            var ubicacion = await _context.Ubicaciones
+                .AsNoTracking()
+                .FirstOrDefaultAsync(ub => ub.CodigoComuna == ubicacionVM.CodigoComuna && ub.Direccion == ubicacionVM.Direccion);
+
+            if(ubicacion == null)
+            {
+
+            }
+            */
+
+            var paseadores = await _context.Paseadores
+                .Include(p => p.PerroAceptado)
+                .Include(p => p.Tarifas)
+                .Include(p => p.ExperienciaPaseador)
+                .Include(p => p.Paseos)
+                .ThenInclude(ps => ps.Calificacion)
+                .Include(p => p.Usuario)
+                .ThenInclude(u => u.Imagen)
+                .Include(p => p.Ubicacion)
+                .Where(p => p.Ubicacion.CodigoComuna == codigoComuna && p.Activado && p.Tarifas != null && p.PerroAceptado != null)
+                .Select(p => new Paseador
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    Apellido = p.Apellido,
+                    Descripcion = p.Descripcion,
+                    ExperienciaPaseador = new ExperienciaPaseador
+                    {
+                        Descripcion = p.ExperienciaPaseador.Descripcion
+                    },
+                    Usuario = new Usuario
+                    {
+                        Imagen = new Imagen
+                        {
+                            Path = p.Usuario.Imagen.Path,
+                            Url = p.Usuario.Imagen.Url
+                        }
+                    },
+                    PerroAceptado = new PerroAceptado
+                    {
+                        TamanioGigante = p.PerroAceptado.TamanioGigante,
+                        TamanioGrande = p.PerroAceptado.TamanioGrande,
+                        TamanioMediano = p.PerroAceptado.TamanioMediano,
+                        TamanioPequenio = p.PerroAceptado.TamanioPequenio,
+                        TamanioToy = p.PerroAceptado.TamanioToy,
+                        CantidadPerro = p.PerroAceptado.CantidadPerro
+                    },
+                    Tarifas = p.Tarifas,
+                    Paseos = p.Paseos
+
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            if(paseadores == null || paseadores.Count() == 0)
+            {
+                return NotFound(new { mensaje = "No hay paseadores en la comuna" });
+            }
+
+            List<PaseadorVM> paseadoresVM = new List<PaseadorVM>();
+
+            foreach (var paseador in paseadores)
+            {
+                PaseadorVM paseadorVM = new PaseadorVM
+                {
+                    Id = paseador.Id,
+                    Nombre = paseador.Nombre,
+                    Apellido = paseador.Apellido,
+                    Descripcion = paseador.Descripcion,
+                    ExperienciaPaseador = paseador.ExperienciaPaseador,
+                    Usuario = paseador.Usuario,
+                    PerroAceptado = paseador.PerroAceptado,
+                    TarifaActual = paseador.Tarifas.FirstOrDefault(t => t.FechaTermino == null),
+                    //Calificacion = paseador.Paseos.Where(ps => ps.Calificado).Average(ps => ps.Calificacion.Valor)
+                };
+
+                paseadoresVM.Add(paseadorVM);
+            }
+
+            if(paseadoresVM.Count() == 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo obtener los paseadores de la comuna" });
+            }
+
+            return Ok(paseadoresVM);
+
+        }
+
+        [HttpGet]
+        [Route("ObtenerPostulantes")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> ObtenerPaseadoresPostulantes()
+        {
+            var paseadores = await _context.Paseadores
+                .Include(p => p.Usuario)
+                .Include(p => p.ExperienciaPaseador)
+                .Where(p => p.Activado == false && p.ExperienciaPaseador.Id == 1)
+                .Select(p => new Paseador
+                {
+                    Id = p.Id,
+                    Rut = p.Rut,
+                    Dv = p.Dv,
+                    Nombre = p.Nombre,
+                    Apellido = p.Apellido,
+                    Telefono = p.Telefono,
+                    Usuario = new Usuario
+                    {
+                        Email = p.Usuario.Email
+                    },
+                    ExperienciaPaseador =
+                    {
+                        Id = p.ExperienciaPaseador.Id,
+                        Descripcion = p.ExperienciaPaseador.Descripcion
+                    }
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            if(paseadores == null || paseadores.Count() == 0)
+            {
+                return NotFound(new { mensaje = "No hay paseadores postulantes" });
+            }
+
+            return Ok(paseadores);
+
+        }
+
+        [HttpPut]
+        [Route("Activar/{id:int}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> ActivarPaseadorPostulante(int id, int codigoExperiencia)
+        {
+            var experienciaPaseador = await _context.ExperienciaPaseadores.FindAsync(codigoExperiencia);
+
+            if(experienciaPaseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener la experiencia para el paseador" });
+            }
+
+            if (experienciaPaseador.Id == 1)
+            {
+                return Ok(new { mensaje = "No se activó la cuenta del paseador ya que no se le asignó la experiencia necesaria para realizar paseos" });
+            }
+
+            var paseador = await _context.Paseadores.FindAsync(id);
+
+            if(paseador == null)
+            {
+                return NotFound(new { mensaje = "No se pudo obtener al paseador" });
+            }                       
+
+            paseador.ExperienciaPaseador = experienciaPaseador;
+            paseador.Activado = true;
+
+            var modificacionExperiencia = await _context.SaveChangesAsync();
+
+            if(modificacionExperiencia <= 0)
+            {
+                return BadRequest(new { mensaje = "No se pudo cambiar la experiencia para el paseador" });
+            }
+
+            return NoContent();
+
+        }
+
+
 
         /*
         

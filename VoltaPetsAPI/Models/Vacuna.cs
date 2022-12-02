@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_vacuna")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoVacuna { get; set; }
+        public int Id { get; set; }
 
         [Column("descripcion")]
         [Required]
@@ -31,7 +31,7 @@ namespace VoltaPetsAPI.Models
         public bool Obligatoria { get; set; }
 
         //Relacion con Vacuna Mascota
-        public virtual ICollection<VacunaMascota> VacunaMascotas { get; set; }
+        public ICollection<VacunaMascota> VacunaMascotas { get; set; }
 
     }
 }

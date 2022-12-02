@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_administrador")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoAdministrador { get; set; }
+        public int Id { get; set; }
 
         [Column("nombre")]
         [Required]
@@ -27,7 +27,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoUsuario { get; set; }
 
         [ForeignKey("CodigoUsuario")]
-        public virtual Usuario Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
     }
 }

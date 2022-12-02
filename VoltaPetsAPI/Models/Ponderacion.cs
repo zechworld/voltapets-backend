@@ -11,7 +11,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_ponderacion")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPonderacion { get; set; }
+        public int Id { get; set; }
 
         [Column("positivo")]
         [Required]
@@ -37,7 +37,7 @@ namespace VoltaPetsAPI.Models
         public DateTime? FechaTermino { get; set; }
 
         //Relacion con Comportamiento
-        public virtual ICollection<Comportamiento> Comportamientos { get; set; }
+        public ICollection<Comportamiento> Comportamientos { get; set; }
 
     }
 }

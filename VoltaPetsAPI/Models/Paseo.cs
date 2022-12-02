@@ -11,7 +11,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_paseo")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPaseo { get; set; }
+        public int Id { get; set; }
 
         [Column("fecha")]
         [Required]
@@ -45,7 +45,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoPaseador { get; set; }
 
         [ForeignKey("CodigoPaseador")]
-        public virtual Paseador Paseador { get; set; }
+        public Paseador Paseador { get; set; }
 
         //FK Estado Paseo
         [Column("codigo_estado_paseo")]
@@ -53,24 +53,24 @@ namespace VoltaPetsAPI.Models
         public int CodigoEstadoPaseo { get; set; }
 
         [ForeignKey("CodigoEstadoPaseo")]
-        public virtual EstadoPaseo EstadoPaseo { get; set; }
+        public EstadoPaseo EstadoPaseo { get; set; }
 
         //FK Parque
         [Column("codigo_parque")]
         public int? CodigoParque { get; set; }
 
         [ForeignKey("CodigoParque")]
-        public virtual ParquePetFriendly ParquePetFriendly { get; set; }
+        public ParquePetFriendly ParquePetFriendly { get; set; }
 
         //FK Calificacion
         [Column("codigo_calificacion")]
         public int? CodigoCalificacion { get; set; }
 
         [ForeignKey("CodigoCalificacion")]
-        public virtual Calificacion Calificacion { get; set; }
+        public Calificacion Calificacion { get; set; }
 
         //Relacion con Paseo Mascota
-        public virtual ICollection<PaseoMascota> PaseoMascotas { get; set; }
+        public ICollection<PaseoMascota> PaseoMascotas { get; set; }
 
     }
 }

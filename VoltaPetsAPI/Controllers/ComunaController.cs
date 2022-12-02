@@ -22,7 +22,9 @@ namespace VoltaPetsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerComunas()
         {
-            var comunas = await _context.Comunas.ToListAsync();
+            var comunas = await _context.Comunas
+                .AsNoTracking()
+                .ToListAsync();
 
             if (comunas.Any())
             {
@@ -40,11 +42,11 @@ namespace VoltaPetsAPI.Controllers
             var comunas = await _context.Comunas
                 .Include(c => c.Provincia)
                 .ThenInclude(p => p.Region)
-                .Where(c => c.Provincia.Region.CodigoRegion == codigoRegion)
+                .Where(c => c.Provincia.Region.Id == codigoRegion)
                 .Select(c => new Comuna()
                 {
-                    CodigoComuna=c.CodigoComuna,
-                    Descripcion=c.Descripcion,
+                    Id = c.Id,
+                    Descripcion = c.Descripcion,
                 }).AsNoTracking()
                 .ToListAsync();
 

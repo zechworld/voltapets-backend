@@ -89,7 +89,7 @@ namespace VoltaPetsAPI.Controllers
             var usuario = await _context.Usuarios
                 .Include(u => u.Rol)
                 .Include(u => u.Imagen)
-                .FirstOrDefaultAsync(usr => usr.CodigoUsuario == codigoUsuario);
+                .FirstOrDefaultAsync(usr => usr.Id == codigoUsuario);
 
             if (usuario != null)
             {
@@ -97,7 +97,7 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 1)
                 {
                     var admin = await _context.Administradores
-                        .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(admin => admin.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -113,7 +113,7 @@ namespace VoltaPetsAPI.Controllers
                 if (usuario.CodigoRol == 2)
                 {
                     var paseador = await _context.Paseadores
-                        .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(paseador => paseador.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -130,7 +130,7 @@ namespace VoltaPetsAPI.Controllers
                 // Si es Tutor
                 if (usuario.CodigoRol == 3) {
                     var tutor = await _context.Tutores
-                        .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.CodigoUsuario);
+                        .FirstOrDefaultAsync(tutor => tutor.CodigoUsuario == usuario.Id);
 
                     return Ok(new
                     {
@@ -156,6 +156,7 @@ namespace VoltaPetsAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
                 return BadRequest(ModelState);
             }
 
@@ -163,19 +164,29 @@ namespace VoltaPetsAPI.Controllers
 
             if (usuario == null)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
+
             var imagen = new Imagen();
             imagen.Url = img.Url;
-            imagen.Path = img.Path; 
+            imagen.Path = img.Path;
+            imagen.Public_Id = img.Public_Id;
+            
 
-            _context.Imagenes.Add(imagen);
+            _context.Imagenes.Add(imagen);   //TODO: Eliminar
 
-            usuario.CodigoImagen = imagen.CodigoImagen; 
+            usuario.CodigoImagen = imagen.Id; //TODO: Eliminar
             usuario.Imagen = imagen;
 
-            await _context.SaveChangesAsync();
+            var modificacionImagen = await _context.SaveChangesAsync();
+
+            if(modificacionImagen <= 0)
+            {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, img.ToImagen());
+                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
+            }
 
             return NoContent();
         }
@@ -187,6 +198,7 @@ namespace VoltaPetsAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return BadRequest(ModelState);
             }
 
@@ -200,27 +212,44 @@ namespace VoltaPetsAPI.Controllers
             }
             else
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return BadRequest(new { mensaje = "Error en obtener el usuario actual" });
             }
 
             var usuario = await _context.Usuarios
                 .Include(user => user.Imagen)
-                .FirstOrDefaultAsync(user => user.CodigoUsuario == codigoUsuario);
+                .FirstOrDefaultAsync(user => user.Id == codigoUsuario);
 
             if (usuario == null)
             {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
                 return NotFound(new { mensaje = "Usuario no encontrado" });
             }
 
+            var imagenAnteriorPublicId = usuario.Imagen.Public_Id;
 
+            usuario.Imagen.Public_Id = imagen.Public_Id;
             usuario.Imagen.Url = imagen.Url;
             usuario.Imagen.Path = imagen.Path;
-            await _context.SaveChangesAsync();
+            var modificacionImagen = await _context.SaveChangesAsync();
 
-            //var deletionParams = new DeletionParams(imagen.Public_id);
-            //var resultadoEliminacion = _cloudinary.Destroy(deletionParams);
+            if(modificacionImagen <= 0)
+            {
+                ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
+                return BadRequest(new { mensaje = "No se pudo cambiar la imagen de perfil" });
+            }
+            else
+            {
+                if (imagenAnteriorPublicId != _config["Cloudinary:DefaultPublicID"])
+                {
+                    imagen.Public_Id = imagenAnteriorPublicId;
+                    ImagenCloudinary.EliminarImagenHosting(_cloudinary, imagen.ToImagen());
 
-            return NoContent();
+                }
+
+                return NoContent();
+            }
+            
         }
 
         private string BuildToken(Usuario usuario)
@@ -231,7 +260,7 @@ namespace VoltaPetsAPI.Controllers
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-                new Claim(JwtRegisteredClaimNames.Sid, usuario.CodigoUsuario.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sid, usuario.Id.ToString()),
                 new Claim("Rol", usuario.CodigoRol.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };

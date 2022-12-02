@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_rango")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoRango { get; set; }
+        public int Id { get; set; }
 
         [Column("basico_inferior")]
         [Required]
@@ -33,7 +33,7 @@ namespace VoltaPetsAPI.Models
 
         [Column("social_superior")]
         [Required]
-        public int SocialSupeiior { get; set; }
+        public int SocialSuperior { get; set; }
 
         //FK Experiencia Paseador
         [Column("codigo_experiencia")]
@@ -41,7 +41,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoExperiencia { get; set; }
 
         [ForeignKey("CodigoExperiencia")]
-        public virtual ExperienciaPaseador ExperienciaPaseador { get; set; }
+        public ExperienciaPaseador ExperienciaPaseador { get; set; }
 
     }
 }

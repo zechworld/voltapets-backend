@@ -10,6 +10,7 @@ namespace VoltaPetsAPI.Models.ViewModels
 
         public string Password { get; set; }
 
+        [MinLength(6, ErrorMessage = "La contraseña debe tener como mínimo 6 carácteres")]
         [MaxLength(20, ErrorMessage = "La contraseña debe tener como maximo 20 caracteres")]
         [RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-\\.,]).{6,}$", ErrorMessage = "Formato de contraseña incorrecto (Incluir Mayuscula, Minuscula, Numero, Caracter especial")]
         public string NewPassword { get; set; }

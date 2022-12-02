@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_tipo_anuncio")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoTipoAnuncio { get; set; }
+        public int Id { get; set; }
 
         [Column("descripcion")]
         [Required]
@@ -18,7 +18,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Anuncio
-        public virtual ICollection<Anuncio> Anuncios { get; set; }
+        public ICollection<Anuncio> Anuncios { get; set; }
         
     }
 }

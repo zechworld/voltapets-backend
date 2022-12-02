@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_puntaje")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPuntaje { get; set; }
+        public int Id { get; set; }
 
         [Column("amigable")]
         [Required]
@@ -53,7 +53,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoPaseoMascota { get; set; }
 
         [ForeignKey("CodigoPaseoMascota")]
-        public virtual PaseoMascota PaseoMascota { get; set; }
+        public PaseoMascota PaseoMascota { get; set; }
 
     }
 }

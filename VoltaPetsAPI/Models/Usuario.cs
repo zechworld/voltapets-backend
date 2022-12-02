@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_usuario")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoUsuario { get; set; }
+        public int Id { get; set; }
 
         [Column("email")]
         [Required]
@@ -30,23 +30,23 @@ namespace VoltaPetsAPI.Models
         public int CodigoRol { get; set; }
 
         [ForeignKey("CodigoRol")]
-        public virtual Rol Rol { get; set; }
+        public Rol Rol { get; set; }
 
         //FK Imagen
         [Column("codigo_imagen")]
         public int? CodigoImagen { get; set; }
 
         [ForeignKey("CodigoImagen")]
-        public virtual Imagen Imagen { get; set; }
+        public Imagen Imagen { get; set; }
 
         //Relacion 1 a 1 con Administrador
-        public virtual Administrador Administrador { get; set; }
+        public Administrador Administrador { get; set; }
 
         //Relacion 1 a 1 con Paseador
-        public virtual Paseador Paseador { get; set; }
+        public Paseador Paseador { get; set; }
 
         //Relacion 1 a 1 con Tutor
-        public virtual Tutor Tutor { get; set; }
+        public Tutor Tutor { get; set; }
 
     }
 }
