@@ -32,7 +32,15 @@ namespace VoltaPetsAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerPaseadores()
         {
-            return Ok(await _context.Paseadores.Where(p => p.Activado == true).ToListAsync());
+            var paseadores = await _context.Paseadores.Where(p => p.Activado == true).ToListAsync();
+
+            if (paseadores == null)
+            {
+                return NotFound(new { mensaje = "No hay paseadores registrados en la aplicación" });
+            }
+
+
+            return Ok(paseadores);
         }
 
         [HttpGet]
