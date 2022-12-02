@@ -9,7 +9,11 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_imagen")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoImagen { get; set; }
+        public int Id { get; set; }
+
+        [Column("public_id")]
+        [Required]
+        public string Public_Id { get; set; }
 
         [Column("path")]
         [Required]
@@ -17,19 +21,20 @@ namespace VoltaPetsAPI.Models
 
         [Column("url")]
         [Required]
+        [Url]
         public string Url { get; set; }
 
         //Relacion 1 a 1 con Usuario
-        public virtual Usuario Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
         //Relacion 1 a 1 con Mascota
-        public virtual Mascota Mascota { get; set; }
+        public Mascota Mascota { get; set; }
 
         //Relacion 1 a 1 con VacunaMascota
-        public virtual VacunaMascota VacunaMascota { get; set; }
+        public VacunaMascota VacunaMascota { get; set; }
 
         //Relacion 1 a 1 con Anuncio
-        public virtual Anuncio Anuncio { get; set; }
+        public Anuncio Anuncio { get; set; }
 
     }
 }

@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_paseador")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoPaseador { get; set; }
+        public int Id { get; set; }
 
         [Column("rut")]
         [Required]
@@ -24,17 +24,17 @@ namespace VoltaPetsAPI.Models
 
         [Column("nombre")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Nombre { get; set; }
 
         [Column("apellido")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Apellido { get; set; }
 
         [Column("telefono")]
         [Required]
-        [StringLength(11)]
+        [StringLength(12)]
         public string Telefono { get; set; }
 
         [Column("descripcion")]
@@ -51,7 +51,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoUsuario { get; set; }
 
         [ForeignKey("CodigoUsuario")]
-        public virtual Usuario Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
         //FK Ubicacion
         [Column("codigo_ubicacion")]
@@ -59,24 +59,23 @@ namespace VoltaPetsAPI.Models
         public int CodigoUbicacion { get; set; }
 
         [ForeignKey("CodigoUbicacion")]
-        public virtual Ubicacion Ubicacion { get; set; }
+        public Ubicacion Ubicacion { get; set; }
 
         //FK Experiencia Paseador
         [Column("codigo_experiencia")]
-        [Required]
         public int CodigoExperiencia { get; set; }
 
         [ForeignKey("CodigoExperiencia")]
-        public virtual ExperienciaPaseador ExperienciaPaseador { get; set; }
+        public ExperienciaPaseador ExperienciaPaseador { get; set; }
 
         //Relacion con Paseo
-        public virtual ICollection<Paseo> Paseos { get; set; }
+        public ICollection<Paseo> Paseos { get; set; }
 
         //Relacion con Tarifa
-        public virtual ICollection<Tarifa> Tarifas { get; set; }
+        public ICollection<Tarifa> Tarifas { get; set; }
 
         //Relacion 1 a 1 con PerroAceptado
-        public virtual PerroAceptado PerroAceptado { get; set; }
+        public PerroAceptado PerroAceptado { get; set; }
 
     }
 }

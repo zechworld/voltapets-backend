@@ -10,21 +10,21 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_tutor")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoTutor { get; set; }
+        public int Id { get; set; }
 
         [Column("nombre")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Nombre { get; set; }
 
         [Column("apellido")]
         [Required]
-        [StringLength(20)]
+        [StringLength(40)]
         public string Apellido { get; set; }
 
         [Column("telefono")]
         [Required]
-        [StringLength(11)]
+        [StringLength(12)]
         public string Telefono { get; set; }
 
         [Column("descripcion")]
@@ -41,7 +41,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoUsuario { get; set; }
 
         [ForeignKey("CodigoUsuario")]
-        public virtual Usuario Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
         //FK Ubicacion
         [Column("codigo_ubicacion")]
@@ -49,13 +49,13 @@ namespace VoltaPetsAPI.Models
         public int CodigoUbicacion { get; set; }
 
         [ForeignKey("CodigoUbicacion")]
-        public virtual Ubicacion Ubicacion { get; set; }
+        public Ubicacion Ubicacion { get; set; }
 
         //Relacion con Mascota
-        public virtual ICollection<Mascota> Mascotas { get; set; }
+        public ICollection<Mascota> Mascotas { get; set; }
 
         //Relacion con Anuncio
-        public virtual ICollection<Anuncio> Anuncios { get; set; }
+        public ICollection<Anuncio> Anuncios { get; set; }
 
     }
 }

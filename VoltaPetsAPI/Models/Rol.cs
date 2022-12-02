@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_rol")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoRol { get; set; }
+        public int Id { get; set; }
 
         [Column("descripcion")]
         [Required]
@@ -18,7 +18,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Usuario
-        public virtual ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario> Usuarios { get; set; }
 
     }
 }

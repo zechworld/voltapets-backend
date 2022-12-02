@@ -21,7 +21,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Administrador", b =>
                 {
-                    b.Property<int>("CodigoAdministrador")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_administrador")
                         .HasColumnType("integer")
@@ -43,7 +43,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoAdministrador");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoUsuario")
                         .IsUnique();
@@ -53,7 +53,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Anuncio", b =>
                 {
-                    b.Property<int>("CodigoAnuncio")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_anuncio")
                         .HasColumnType("integer")
@@ -106,7 +106,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(100)")
                         .HasMaxLength(100);
 
-                    b.HasKey("CodigoAnuncio");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoComuna");
 
@@ -125,7 +125,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Calificacion", b =>
                 {
-                    b.Property<int>("CodigoCalificacion")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_calificacion")
                         .HasColumnType("integer")
@@ -135,14 +135,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("valor")
                         .HasColumnType("real");
 
-                    b.HasKey("CodigoCalificacion");
+                    b.HasKey("Id");
 
                     b.ToTable("calificacion");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Comportamiento", b =>
                 {
-                    b.Property<int>("CodigoComportamiento")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_comportamiento")
                         .HasColumnType("integer")
@@ -172,7 +172,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("nota_positivo")
                         .HasColumnType("real");
 
-                    b.HasKey("CodigoComportamiento");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoPaseoMascota")
                         .IsUnique();
@@ -184,7 +184,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Compromiso", b =>
                 {
-                    b.Property<int>("CodigoCompromiso")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_compromiso")
                         .HasColumnType("integer")
@@ -204,7 +204,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(100)")
                         .HasMaxLength(100);
 
-                    b.HasKey("CodigoCompromiso");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoMascota");
 
@@ -213,7 +213,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Comuna", b =>
                 {
-                    b.Property<int>("CodigoComuna")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_comuna")
                         .HasColumnType("integer")
@@ -228,7 +228,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("descripcion")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoComuna");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoProvincia");
 
@@ -237,7 +237,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.EstadoMascota", b =>
                 {
-                    b.Property<int>("CodigoEstadoMascota")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_estado_mascota")
                         .HasColumnType("integer")
@@ -249,14 +249,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoEstadoMascota");
+                    b.HasKey("Id");
 
                     b.ToTable("estado_mascota");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.EstadoPaseo", b =>
                 {
-                    b.Property<int>("CodigoEstadoPaseo")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_estado_paseo")
                         .HasColumnType("integer")
@@ -268,14 +268,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(15)")
                         .HasMaxLength(15);
 
-                    b.HasKey("CodigoEstadoPaseo");
+                    b.HasKey("Id");
 
                     b.ToTable("estado_paseo");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.ExperienciaPaseador", b =>
                 {
-                    b.Property<int>("CodigoExperiencia")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_experiencia")
                         .HasColumnType("integer")
@@ -286,14 +286,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("descripcion")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoExperiencia");
+                    b.HasKey("Id");
 
                     b.ToTable("experiencia_paseador");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.GrupoEtario", b =>
                 {
-                    b.Property<int>("CodigoEtario")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_etario")
                         .HasColumnType("integer")
@@ -305,26 +305,22 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.Property<string>("EdadInferior")
-                        .IsRequired()
+                    b.Property<double>("EdadInferior")
                         .HasColumnName("edad_inferior")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("double precision");
 
-                    b.Property<string>("EdadSuperior")
-                        .IsRequired()
+                    b.Property<double>("EdadSuperior")
                         .HasColumnName("edad_superior")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("double precision");
 
-                    b.HasKey("CodigoEtario");
+                    b.HasKey("Id");
 
                     b.ToTable("grupo_etario");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Imagen", b =>
                 {
-                    b.Property<int>("CodigoImagen")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_imagen")
                         .HasColumnType("integer")
@@ -335,19 +331,24 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("path")
                         .HasColumnType("text");
 
+                    b.Property<string>("Public_Id")
+                        .IsRequired()
+                        .HasColumnName("public_id")
+                        .HasColumnType("text");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnName("url")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoImagen");
+                    b.HasKey("Id");
 
                     b.ToTable("imagen");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Mascota", b =>
                 {
-                    b.Property<int>("CodigoMascota")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_mascota")
                         .HasColumnType("integer")
@@ -361,7 +362,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("codigo_etario")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CodigoImagen")
+                    b.Property<int>("CodigoImagen")
                         .HasColumnName("codigo_imagen")
                         .HasColumnType("integer");
 
@@ -386,9 +387,9 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(500)")
                         .HasMaxLength(500);
 
-                    b.Property<int>("EdadRegistro")
+                    b.Property<double?>("EdadRegistro")
                         .HasColumnName("edad_registro")
-                        .HasColumnType("integer");
+                        .HasColumnType("double precision");
 
                     b.Property<bool>("Esterilizado")
                         .HasColumnName("esterilizado")
@@ -404,7 +405,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoMascota");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoEstadoMascota");
 
@@ -426,7 +427,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.MascotaAnuncio", b =>
                 {
-                    b.Property<int>("CodigoMascotaAnuncio")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_mascota_anuncio")
                         .HasColumnType("integer")
@@ -462,7 +463,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoMascotaAnuncio");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoEtario");
 
@@ -479,7 +480,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.ParquePetFriendly", b =>
                 {
-                    b.Property<int>("CodigoParque")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_parque")
                         .HasColumnType("integer")
@@ -503,7 +504,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("longitud")
                         .HasColumnType("double precision");
 
-                    b.HasKey("CodigoParque");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoComuna");
 
@@ -512,7 +513,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Paseador", b =>
                 {
-                    b.Property<int>("CodigoPaseador")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_paseador")
                         .HasColumnType("integer")
@@ -525,8 +526,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnName("apellido")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<int>("CodigoExperiencia")
                         .HasColumnName("codigo_experiencia")
@@ -554,8 +555,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnName("nombre")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Rut")
                         .IsRequired()
@@ -566,10 +567,10 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnName("telefono")
-                        .HasColumnType("character varying(11)")
-                        .HasMaxLength(11);
+                        .HasColumnType("character varying(12)")
+                        .HasMaxLength(12);
 
-                    b.HasKey("CodigoPaseador");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoExperiencia");
 
@@ -583,7 +584,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Paseo", b =>
                 {
-                    b.Property<int>("CodigoPaseo")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_paseo")
                         .HasColumnType("integer")
@@ -633,7 +634,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("hora_termino")
                         .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("CodigoPaseo");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoCalificacion");
 
@@ -648,7 +649,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.PaseoMascota", b =>
                 {
-                    b.Property<int>("CodigoPaseoMascota")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_paseo_mascota")
                         .HasColumnType("integer")
@@ -666,7 +667,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("evaluado")
                         .HasColumnType("boolean");
 
-                    b.HasKey("CodigoPaseoMascota");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoMascota");
 
@@ -677,7 +678,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.PerroAceptado", b =>
                 {
-                    b.Property<int>("CodigoAceptado")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_aceptado")
                         .HasColumnType("integer")
@@ -711,7 +712,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("tamanio_toy")
                         .HasColumnType("boolean");
 
-                    b.HasKey("CodigoAceptado");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoPaseador")
                         .IsUnique();
@@ -721,7 +722,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.PerroPermitido", b =>
                 {
-                    b.Property<int>("CodigoPermitido")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_permitido")
                         .HasColumnType("integer")
@@ -743,7 +744,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("tamanio_mediano")
                         .HasColumnType("boolean");
 
-                    b.HasKey("CodigoPermitido");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoExperiencia")
                         .IsUnique();
@@ -753,7 +754,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Ponderacion", b =>
                 {
-                    b.Property<int>("CodigoPonderacion")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_ponderacion")
                         .HasColumnType("integer")
@@ -783,14 +784,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("positivo")
                         .HasColumnType("real");
 
-                    b.HasKey("CodigoPonderacion");
+                    b.HasKey("Id");
 
                     b.ToTable("ponderacion");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Provincia", b =>
                 {
-                    b.Property<int>("CodigoProvincia")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_provincia")
                         .HasColumnType("integer")
@@ -805,7 +806,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("descripcion")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoProvincia");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoRegion");
 
@@ -814,7 +815,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.PuntajePersonalidad", b =>
                 {
-                    b.Property<int>("CodigoPuntaje")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_puntaje")
                         .HasColumnType("integer")
@@ -860,7 +861,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("timido")
                         .HasColumnType("real");
 
-                    b.HasKey("CodigoPuntaje");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoPaseoMascota")
                         .IsUnique();
@@ -870,7 +871,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.RangoTarifa", b =>
                 {
-                    b.Property<int>("CodigoRango")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_rango")
                         .HasColumnType("integer")
@@ -900,11 +901,11 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("social_inferior")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SocialSupeiior")
+                    b.Property<int>("SocialSuperior")
                         .HasColumnName("social_superior")
                         .HasColumnType("integer");
 
-                    b.HasKey("CodigoRango");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoExperiencia")
                         .IsUnique();
@@ -914,7 +915,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Raza", b =>
                 {
-                    b.Property<int>("CodigoRaza")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_raza")
                         .HasColumnType("integer")
@@ -930,14 +931,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("ppp")
                         .HasColumnType("boolean");
 
-                    b.HasKey("CodigoRaza");
+                    b.HasKey("Id");
 
                     b.ToTable("raza");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Recordatorio", b =>
                 {
-                    b.Property<int>("CodigoRecordatorio")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_recordatorio")
                         .HasColumnType("integer")
@@ -963,7 +964,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(100)")
                         .HasMaxLength(100);
 
-                    b.HasKey("CodigoRecordatorio");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoMascota");
 
@@ -972,7 +973,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Region", b =>
                 {
-                    b.Property<int>("CodigoRegion")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_region")
                         .HasColumnType("integer")
@@ -983,14 +984,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("Descripcion")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoRegion");
+                    b.HasKey("Id");
 
                     b.ToTable("region");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Rol", b =>
                 {
-                    b.Property<int>("CodigoRol")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_rol")
                         .HasColumnType("integer")
@@ -1002,14 +1003,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoRol");
+                    b.HasKey("Id");
 
                     b.ToTable("rol");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Sexo", b =>
                 {
-                    b.Property<int>("CodigoSexo")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_sexo")
                         .HasColumnType("integer")
@@ -1021,18 +1022,26 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(10)")
                         .HasMaxLength(10);
 
-                    b.HasKey("CodigoSexo");
+                    b.HasKey("Id");
 
                     b.ToTable("sexo");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Tamanio", b =>
                 {
-                    b.Property<int>("CodigoTamanio")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_tamanio")
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<double>("AlturaInferior")
+                        .HasColumnName("altura_inferior")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AlturaSuperior")
+                        .HasColumnName("altura_superior")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -1040,18 +1049,22 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.Property<float>("altura")
-                        .HasColumnName("altura")
-                        .HasColumnType("real");
+                    b.Property<double>("PesoInferior")
+                        .HasColumnName("peso_inferior")
+                        .HasColumnType("double precision");
 
-                    b.HasKey("CodigoTamanio");
+                    b.Property<double>("PesoSuperior")
+                        .HasColumnName("peso_superior")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
 
                     b.ToTable("tamanio");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Tarifa", b =>
                 {
-                    b.Property<int>("CodigoTarifa")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_tarifa")
                         .HasColumnType("integer")
@@ -1081,7 +1094,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("social")
                         .HasColumnType("integer");
 
-                    b.HasKey("CodigoTarifa");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoPaseador");
 
@@ -1090,7 +1103,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.TipoAnuncio", b =>
                 {
-                    b.Property<int>("CodigoTipoAnuncio")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_tipo_anuncio")
                         .HasColumnType("integer")
@@ -1102,14 +1115,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(10)")
                         .HasMaxLength(10);
 
-                    b.HasKey("CodigoTipoAnuncio");
+                    b.HasKey("Id");
 
                     b.ToTable("tipo_anuncio");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.TipoMascota", b =>
                 {
-                    b.Property<int>("CodigoTipoMascota")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_tipo_mascota")
                         .HasColumnType("integer")
@@ -1121,14 +1134,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(10)")
                         .HasMaxLength(10);
 
-                    b.HasKey("CodigoTipoMascota");
+                    b.HasKey("Id");
 
                     b.ToTable("tipo_mascota");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Tutor", b =>
                 {
-                    b.Property<int>("CodigoTutor")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_tutor")
                         .HasColumnType("integer")
@@ -1141,8 +1154,8 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnName("apellido")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<int>("CodigoUbicacion")
                         .HasColumnName("codigo_ubicacion")
@@ -1160,16 +1173,16 @@ namespace VoltaPetsAPI.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnName("nombre")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("character varying(40)")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnName("telefono")
-                        .HasColumnType("character varying(11)")
-                        .HasMaxLength(11);
+                        .HasColumnType("character varying(12)")
+                        .HasMaxLength(12);
 
-                    b.HasKey("CodigoTutor");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoUbicacion");
 
@@ -1181,7 +1194,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Ubicacion", b =>
                 {
-                    b.Property<int>("CodigoUbicacion")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_ubicacion")
                         .HasColumnType("integer")
@@ -1209,7 +1222,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("longitud")
                         .HasColumnType("double precision");
 
-                    b.HasKey("CodigoUbicacion");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoComuna");
 
@@ -1218,7 +1231,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Usuario", b =>
                 {
-                    b.Property<int>("CodigoUsuario")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_usuario")
                         .HasColumnType("integer")
@@ -1245,11 +1258,10 @@ namespace VoltaPetsAPI.Migrations
                         .HasMaxLength(70);
 
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasColumnName("token")
                         .HasColumnType("text");
 
-                    b.HasKey("CodigoUsuario");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoImagen")
                         .IsUnique();
@@ -1261,7 +1273,7 @@ namespace VoltaPetsAPI.Migrations
 
             modelBuilder.Entity("VoltaPetsAPI.Models.Vacuna", b =>
                 {
-                    b.Property<int>("CodigoVacuna")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_vacuna")
                         .HasColumnType("integer")
@@ -1287,14 +1299,14 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnType("character varying(20)")
                         .HasMaxLength(20);
 
-                    b.HasKey("CodigoVacuna");
+                    b.HasKey("Id");
 
                     b.ToTable("vacuna");
                 });
 
             modelBuilder.Entity("VoltaPetsAPI.Models.VacunaMascota", b =>
                 {
-                    b.Property<int>("CodigoVacunaMascota")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("codigo_vacuna_mascota")
                         .HasColumnType("integer")
@@ -1316,7 +1328,7 @@ namespace VoltaPetsAPI.Migrations
                         .HasColumnName("fecha_vacunacion")
                         .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("CodigoVacunaMascota");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoImagen")
                         .IsUnique();
@@ -1419,7 +1431,9 @@ namespace VoltaPetsAPI.Migrations
 
                     b.HasOne("VoltaPetsAPI.Models.Imagen", "Imagen")
                         .WithOne("Mascota")
-                        .HasForeignKey("VoltaPetsAPI.Models.Mascota", "CodigoImagen");
+                        .HasForeignKey("VoltaPetsAPI.Models.Mascota", "CodigoImagen")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VoltaPetsAPI.Models.Raza", "Raza")
                         .WithMany("Mascotas")

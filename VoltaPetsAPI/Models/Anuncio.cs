@@ -9,7 +9,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_anuncio")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoAnuncio { get; set; }
+        public int Id { get; set; }
 
         [Column("titulo")]
         [StringLength(100)]
@@ -39,7 +39,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoTutor { get; set; }
 
         [ForeignKey("CodigoTutor")]
-        public virtual Tutor Tutor { get; set; }
+        public Tutor Tutor { get; set; }
 
         //FK Tipo Anuncio
         [Column("codigo_tipo_anuncio")]
@@ -47,7 +47,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoTipoAnuncio { get; set; }
 
         [ForeignKey("CodigoTipoAnuncio")]
-        public virtual TipoAnuncio TipoAnuncio { get; set; }
+        public TipoAnuncio TipoAnuncio { get; set; }
 
         //FK Mascota Anuncio
         [Column("codigo_mascota_anuncio")]
@@ -55,7 +55,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoMascotaAnuncio { get; set; }
 
         [ForeignKey("CodigoMascotaAnuncio")]
-        public virtual MascotaAnuncio MascotaAnuncio { get; set; }
+        public MascotaAnuncio MascotaAnuncio { get; set; }
 
         //FK Imagen
         [Column("codigo_imagen")]
@@ -63,7 +63,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoImagen { get; set; }
 
         [ForeignKey("CodigoImagen")]
-        public virtual Imagen Imagen { get; set; }
+        public Imagen Imagen { get; set; }
 
         //FK Comuna
         [Column("codigo_comuna")]
@@ -71,7 +71,7 @@ namespace VoltaPetsAPI.Models
         public int CodigoComuna { get; set; }
 
         [ForeignKey("CodigoComuna")]
-        public virtual Comuna Comuna { get; set; }
+        public Comuna Comuna { get; set; }
 
     }
 }

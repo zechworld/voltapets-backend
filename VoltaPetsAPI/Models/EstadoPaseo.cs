@@ -10,7 +10,7 @@ namespace VoltaPetsAPI.Models
         [Column("codigo_estado_paseo")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoEstadoPaseo { get; set; }
+        public int Id { get; set; }
 
         [Column("descripcion")]
         [Required]
@@ -18,7 +18,7 @@ namespace VoltaPetsAPI.Models
         public string Descripcion { get; set; }
 
         //Relacion con Paseo
-        public virtual ICollection<Paseo> Paseos { get; set; }
+        public ICollection<Paseo> Paseos { get; set; }
 
     }
 }
