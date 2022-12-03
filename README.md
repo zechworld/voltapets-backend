@@ -1,14 +1,33 @@
 # Backend para el proyecto Volta Pets
 
 ## Tecnologías usadas
-+ .NET Core 3.1 - Framework del lenguaje C# para construir la API de la aplicación
-+ Cloudinary - Hosting de imágenes web para albergar el registro de imágenes realizadas por los usuarios de la aplicación
-+ Driver PostgreSQL - Driver necesario para generar la conexión con la base de datos realizada con PostgreSQL
-+ Entity Framework - Manejo de entidades para generación de contextos y facilitar la integración entre los modelos
++ **.NET Core 3.1** - Framework del lenguaje C# para construir la API de la aplicación
++ **Cloudinary** - Hosting de imágenes web para albergar el registro de imágenes realizadas por los usuarios de la aplicación
++ **Driver PostgreSQL** - Driver necesario para generar la conexión con la base de datos realizada con PostgreSQL
++ **Entity Framework** - Manejo de entidades para generación de contextos y facilitar la integración entre los modelos
 
++ **Azure DevOps Repos** - Repositorios de Azure para mantener el control de versiones de la aplicación.
 
-## Instalación
+## Requisitos
+Para instalar la aplicación se necesita tener instaladas las siguientes herramientes y aplicativos:
+
+- Visual Studio Code 2019 o posterior – [Ir a página](https://visualstudio.microsoft.com/es/vs/)
+- Gitbash – [Ir a página](https://git-scm.com/)
+
+### Descarga del respositorio
+Es necesario clonar este repositorio de forma local para poder tener el aplicativo, para ello luego de haber instalado Git (GitBash) se deberá copiar el link:
+
+`https://github.com/zechworld/voltapets-backend.git`
+
+Y utilizar el comando de git:
+
+```bash
+git clone https://github.com/zechworld/voltapets-backend.git
+```
+
+# Instalación
 Para instalar la API del proyecto primero se tener instalado el gestor de paquetes nativo de C# llamado`Nuget`.
+
 #
 1. En primer lugar, se debe estar en la carpeta donde se encuentre el el archivo `VoltaPetsAPI.sln`. Luego, se deberán utilizar dos comandos para poder instalar las dependencias utilizadas en el proyecto:
 
