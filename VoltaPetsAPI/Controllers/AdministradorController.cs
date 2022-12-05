@@ -68,6 +68,7 @@ namespace VoltaPetsAPI.Controllers
         {
             var tutores = await _context.Tutores
                 .Include(tutor => tutor.Usuario)
+                .Include(tutor => tutor.Mascotas)
                 .ThenInclude(user => user.Imagen)
                 .ToListAsync();
 
